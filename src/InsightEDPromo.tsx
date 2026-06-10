@@ -1,10 +1,8 @@
 import React from "react";
 import {
 	AbsoluteFill,
-	Audio,
 	interpolate,
 	Sequence,
-	staticFile,
 	useCurrentFrame,
 	useVideoConfig,
 } from "remotion";
@@ -153,6 +151,21 @@ const scenes: Scene[] = [
 
 const clamp = (value: number) => Math.max(0, Math.min(1, value));
 
+const BrandWord: React.FC<{className?: string}> = ({className}) => (
+	<span className={className}>
+		<span className="brandInsight">Insight</span>
+		<span className="brandEd">ED</span>
+	</span>
+);
+
+const SceneTitle: React.FC<{title: string}> = ({title}) => {
+	if (title === "InsightED") {
+		return <BrandWord className="titleBrand" />;
+	}
+
+	return <>{title}</>;
+};
+
 const SceneText: React.FC<{scene: Scene}> = ({scene}) => {
 	const frame = useCurrentFrame();
 	const fps = useVideoConfig().fps;
@@ -168,7 +181,9 @@ const SceneText: React.FC<{scene: Scene}> = ({scene}) => {
 	return (
 		<div className="sceneText" style={textStyle}>
 			<div className="kicker">{scene.kicker}</div>
-			<h1>{scene.title}</h1>
+			<h1>
+				<SceneTitle title={scene.title} />
+			</h1>
 			<p className="subtitle">{scene.subtitle}</p>
 			<p className="narration">{scene.narration}</p>
 		</div>
@@ -181,11 +196,16 @@ const NetworkVisual: React.FC = () => {
 
 	return (
 		<div className="networkVisual">
-			<div className="networkCenter">InsightED</div>
+			<div className="networkCenter">
+				<BrandWord />
+			</div>
 			{labels.map((label, index) => {
-				const pulse = interpolate((frame + index * 12) % 90, [0, 45, 90], [0.35, 1, 0.35]);
-				const nodeStyle: React.CSSProperties = {
-					"--i": index,
+				const pulse = interpolate(
+					(frame + index * 12) % 90,
+					[0, 45, 90],
+					[0.35, 1, 0.35],
+				);
+				const nodeStyle = {
 					"--pulse": pulse,
 				} as React.CSSProperties;
 
@@ -205,7 +225,7 @@ const PhoneVisual: React.FC = () => {
 			<div className="phoneHeader">InsightED Mobile</div>
 			<div className="phoneStatus">Offline-ready field module</div>
 			{["School Profile", "Learner Count", "Facilities Inventory", "Infrastructure Status"].map(
-				(item, index) => (
+				(item) => (
 					<div className="phoneRow" key={item}>
 						<div className="check">✓</div>
 						<div>
@@ -238,7 +258,7 @@ const DashboardVisual: React.FC<{mode: Scene["visual"]}> = ({mode}) => {
 			</div>
 			<div className="dashboardGrid">
 				{cards.map((card, index) => (
-					<div className="metricCard" key={card}>
+					<div className={`metricCard metricCard${index + 1}`} key={card}>
 						<div className="metricLabel">{card}</div>
 						<div className="metricValue">{index === 0 ? "Live" : `${82 + index * 4}%`}</div>
 						<div className="metricBar">
@@ -248,9 +268,9 @@ const DashboardVisual: React.FC<{mode: Scene["visual"]}> = ({mode}) => {
 				))}
 			</div>
 			<div className="chartArea">
-				{[44, 72, 108, 86, 132, 160, 124].map((height, index) => {
-					const barStyle: React.CSSProperties = {height};
-					return <div className="chartBar" style={barStyle} key={index} />;
+				{[88, 72, 61, 79, 54].map((height, index) => {
+					const barStyle: React.CSSProperties = {height: height * 1.7};
+					return <div className={`chartBar chartBar${index + 1}`} style={barStyle} key={index} />;
 				})}
 			</div>
 		</div>
@@ -291,7 +311,9 @@ const SceneLayer: React.FC<{scene: Scene}> = ({scene}) => {
 			<div className="brand">
 				<div className="brandMark">i</div>
 				<div>
-					<div className="brandName">InsightED</div>
+					<div className="brandName">
+						<BrandWord />
+					</div>
 					<div className="brandSub">Education data governance platform</div>
 				</div>
 			</div>
@@ -307,8 +329,6 @@ export const InsightEDPromo: React.FC = () => {
 
 	return (
 		<AbsoluteFill className="videoRoot">
-			{/* Add public/voiceover.mp3 when the narration is recorded. */}
-			{/* <Audio src={staticFile("voiceover.mp3")} volume={0.95} /> */}
 			{scenes.map((scene) => (
 				<Sequence
 					key={`${scene.start}-${scene.title}`}
