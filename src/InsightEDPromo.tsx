@@ -1,12 +1,15 @@
 import React from "react";
 import {
 	AbsoluteFill,
+	Audio,
 	interpolate,
 	Sequence,
+	staticFile,
 	useCurrentFrame,
 	useVideoConfig,
 } from "remotion";
 import "./insighted-promo.css";
+
 
 type Scene = {
 	start: number;
@@ -329,12 +332,13 @@ export const InsightEDPromo: React.FC = () => {
 
 	return (
 		<AbsoluteFill className="videoRoot">
-			{scenes.map((scene) => (
+			{scenes.map((scene, index) => (
 				<Sequence
 					key={`${scene.start}-${scene.title}`}
 					from={scene.start * fps}
 					durationInFrames={(scene.end - scene.start) * fps}
 				>
+					<Audio src={staticFile(`audio_tracks/InsightED_PrimerVid_SL${index + 1}.mp3`)} volume={0.95} />
 					<SceneLayer scene={scene} />
 				</Sequence>
 			))}
