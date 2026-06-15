@@ -2,6 +2,7 @@ import React from "react";
 import {Composition} from "remotion";
 import {InsightEDIntroduction} from "./InsightEDIntroduction";
 import {SIIFUserGuide} from "./SIIFUserGuide";
+import {InsightEDInfrastructure} from "./InsightEDInfrastructure";
 
 export const RemotionRoot: React.FC = () => {
 	return (
@@ -18,6 +19,14 @@ export const RemotionRoot: React.FC = () => {
 				id="SIIFUserGuide"
 				component={SIIFUserGuide}
 				durationInFrames={8790}
+				fps={30}
+				width={1920}
+				height={1080}
+			/>
+			<Composition
+				id="InsightEDInfrastructure"
+				component={InsightEDInfrastructure}
+				durationInFrames={10056}
 				fps={30}
 				width={1920}
 				height={1080}

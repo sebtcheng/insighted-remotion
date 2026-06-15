@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>InsightED | Infrastructure Progress Monitoring Guide Preview</title>
+	<link rel="stylesheet" href="./src/insighted-promo.css" />
+	<style>
+		body {
+			margin: 0;
+			min-height: 100vh;
+			overflow-x: hidden;
+			background:
+				radial-gradient(circle at 12% 14%, rgba(7, 89, 133, 0.34), transparent 34%),
+				radial-gradient(circle at 88% 10%, rgba(251, 191, 36, 0.24), transparent 28%),
+				#071527;
+			color: #f8fafc;
+			font-family: "Comic Neue", ui-sans-serif, system-ui, sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.preview-title {
+			margin: 0 0 8px;
+			font-family: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+			font-weight: 900;
+			color: #7dd3fc;
+			letter-spacing: -0.03em;
+		}
+
+		.preview-note {
+			margin: 0 0 20px;
+			color: #cbd5e1;
+		}
+
+		#player-container {
+			width: 90vw;
+			max-width: 1200px;
+			aspect-ratio: 16 / 9;
+			position: relative;
+			box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6);
+			border-radius: 16px;
+			overflow: hidden;
+			background: #061527;
+			border: 4px solid #1e293b;
+		}
+
+		#canvas-frame {
+			width: 1920px;
+			height: 1080px;
+			position: absolute;
+			top: 0;
+			left: 0;
+			transform-origin: top left;
+		}
+
+		#controls {
+			margin-top: 20px;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px;
+			max-width: 1200px;
+			width: 90vw;
+			background: #0f172a;
+			padding: 16px;
+			border-radius: 12px;
+			border: 1px solid #334155;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.btn {
+			background: #0284c7;
+			color: #fff;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 8px;
+			font-weight: 800;
+			cursor: pointer;
+			font-family: inherit;
+		}
+
+		.btn:hover {
+			background: #0369a1;
+		}
+
+		.btn-secondary {
+			background: #334155;
+		}
+
+		.btn-secondary:hover {
+			background: #475569;
+		}
+
+		.btn.active {
+			background: #fbbf24;
+			color: #0f172a;
+		}
+
+		.timeline-slider {
+			flex-grow: 1;
+			margin: 0 20px;
+			cursor: pointer;
+		}
+
+		#scene-selector {
+			display: flex;
+			gap: 8px;
+			overflow-x: auto;
+			width: 100%;
+			padding-bottom: 8px;
+			margin-bottom: 12px;
+		}
+
+		.scene-tab {
+			flex-shrink: 0;
+			font-size: 13px;
+			padding: 6px 12px;
+			background: #1e293b;
+			border: 1px solid #475569;
+			border-radius: 20px;
+			cursor: pointer;
+			color: #94a3b8;
+			transition: all 0.2s;
+		}
+
+		.scene-tab.active {
+			background: #0284c7;
+			color: white;
+			border-color: #38bdf8;
+		}
+
+		.textStage {
+			position: absolute;
+			inset: 0;
+			z-index: 6;
+			padding: 112px 120px 92px;
+			display: grid;
+			grid-template-rows: auto 1fr auto;
+			isolation: isolate;
+		}
+
+		.textStage::before {
+			content: "";
+			position: absolute;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			width: 76%;
+			background:
+				radial-gradient(circle at 18% 20%, rgba(125, 211, 252, 0.22), transparent 32%),
+				linear-gradient(135deg, #08315f, #075985);
+			clip-path: polygon(0 0, 90% 0, 100% 100%, 0 100%);
+			z-index: -1;
+		}
+
+		.textStage::after {
+			content: "";
+			position: absolute;
+			width: 190px;
+			height: 190px;
+			right: 78px;
+			top: 82px;
+			border-radius: 999px;
+			background: radial-gradient(circle, rgba(251, 191, 36, 0.25), transparent 64%);
+			box-shadow:
+				0 0 0 18px rgba(251, 191, 36, 0.08),
+				0 0 42px rgba(251, 191, 36, 0.28);
+			z-index: -1;
+		}
+
+		.brandLine {
+			display: flex;
+			align-items: center;
+			gap: 22px;
+		}
+
+		.logoPill {
+			width: 82px;
+			height: 82px;
+			border-radius: 24px;
+			background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(240, 249, 255, 0.9));
+			display: grid;
+			place-items: center;
+			font-family: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+			font-size: 44px;
+			font-weight: 900;
+			color: #075985;
+			box-shadow: 0 18px 44px rgba(11, 31, 77, 0.2);
+		}
+
+		.brandText {
+			font-family: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+			font-size: 30px;
+			font-weight: 900;
+		}
+
+		.brandInsight {
+			color: #e0f2fe;
+		}
+
+		.brandEd {
+			color: #fecaca;
+		}
+
+		.sceneBody {
+			display: grid;
+			align-content: start;
+			margin-top: 36px;
+			max-width: 1030px;
+		}
+
+		.kicker {
+			font-family: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+			color: #fbbf24;
+			font-size: 24px;
+			font-weight: 900;
+			letter-spacing: 0.18em;
+			text-transform: uppercase;
+			margin-bottom: 22px;
+		}
+
+		.title {
+			font-family: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+			font-size: 86px;
+			line-height: 0.98;
+			font-weight: 900;
+			letter-spacing: -0.055em;
+			max-width: 930px;
+			margin: 0;
+			color: #f8fafc;
+			text-shadow: 0 12px 32px rgba(15, 23, 42, 0.24);
+		}
+
+		.title .brandInsight {
+			color: #e0f2fe;
+		}
+
+		.title .brandEd {
+			color: #fecaca;
+		}
+
+		.keywordRow {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 14px;
+			margin-top: 38px;
+			max-width: 940px;
+		}
+
+		.keyword {
+			padding: 14px 19px;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.15);
+			border: 1px solid rgba(255, 255, 255, 0.28);
+			box-shadow: inset 0 -3px 0 rgba(251, 191, 36, 0.72);
+			font-family: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+			font-size: 25px;
+			font-weight: 900;
+			color: #fef3c7;
+			position: relative;
+		}
+
+		.bulletList {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 16px;
+			max-width: 920px;
+			margin: 40px 0 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		.bullet {
+			display: flex;
+			align-items: flex-start;
+			gap: 15px;
+			min-height: 96px;
+			padding: 18px 20px;
+			border-radius: 20px;
+			background: rgba(255, 255, 255, 0.13);
+			border: 1px solid rgba(255, 255, 255, 0.22);
+			font-size: 28px;
+			font-weight: 800;
+			line-height: 1.1;
+			color: #f8fafc;
+			position: relative;
+		}
+
+		.bullet::before {
+			content: "✓";
+			width: 42px;
+			height: 42px;
+			border-radius: 999px;
+			display: grid;
+			place-items: center;
+			flex: 0 0 auto;
+			background: #fbbf24;
+			color: #08315f;
+			font-family: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+			font-weight: 900;
+			box-shadow: 0 0 20px rgba(251, 191, 36, 0.38);
+		}
+
+		.bulletText {
+			display: flex;
+			flex-direction: column;
+			gap: 7px;
+		}
+
+		.bulletTitle {
+			font-size: 28px;
+			font-weight: 900;
+			line-height: 1.05;
+		}
+
+		.bulletDescription {
+			font-size: 17px;
+			font-weight: 700;
+			line-height: 1.22;
+			color: rgba(240, 249, 255, 0.72);
+			max-width: 340px;
+		}
+
+		.caption {
+			margin-top: 28px;
+			font-size: 27px;
+			font-weight: 700;
+			color: rgba(240, 249, 255, 0.78);
+			max-width: 840px;
+		}
+
+		.progressTrack {
+			z-index: 16;
+		}
+
+		.enter-rise .kicker,
+		.enter-rise .title,
+		.enter-rise .keyword,
+		.enter-rise .bullet,
+		.enter-rise .caption {
+			animation: riseIn 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
+		}
+
+		.enter-swipe .kicker,
+		.enter-swipe .title,
+		.enter-swipe .keyword,
+		.enter-swipe .bullet,
+		.enter-swipe .caption {
+			animation: swipeIn 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
+		}
+
+		.enter-zoom .kicker,
+		.enter-zoom .title,
+		.enter-zoom .keyword,
+		.enter-zoom .bullet,
+		.enter-zoom .caption {
+			animation: zoomIn 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+		}
+
+		.enter-clip .kicker,
+		.enter-clip .title,
+		.enter-clip .keyword,
+		.enter-clip .bullet,
+		.enter-clip .caption {
+			animation: clipIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+		}
+
+		.enter-blur .kicker,
+		.enter-blur .title,
+		.enter-blur .keyword,
+		.enter-blur .bullet,
+		.enter-blur .caption {
+			animation: blurIn 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
+		}
+
+		.keyword:nth-child(1),
+		.bullet:nth-child(1) {
+			animation-delay: 0.08s;
+		}
+
+		.keyword:nth-child(2),
+		.bullet:nth-child(2) {
+			animation-delay: 0.14s;
+		}
+
+		.keyword:nth-child(3),
+		.bullet:nth-child(3) {
+			animation-delay: 0.20s;
+		}
+
+		.keyword:nth-child(4),
+		.bullet:nth-child(4) {
+			animation-delay: 0.26s;
+		}
+
+		.caption {
+			animation-delay: 0.32s;
+		}
+
+		@keyframes riseIn {
+			from {
+				opacity: 0;
+				transform: translateY(38px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes swipeIn {
+			from {
+				opacity: 0;
+				transform: translateX(-52px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateX(0);
+			}
+		}
+
+		@keyframes zoomIn {
+			from {
+				opacity: 0;
+				transform: scale(0.92);
+			}
+
+			to {
+				opacity: 1;
+				transform: scale(1);
+			}
+		}
+
+		@keyframes clipIn {
+			from {
+				opacity: 0;
+				clip-path: inset(0 100% 0 0);
+				transform: translateX(-18px);
+			}
+
+			to {
+				opacity: 1;
+				clip-path: inset(0 0 0 0);
+				transform: translateX(0);
+			}
+		}
+
+		@keyframes blurIn {
+			from {
+				opacity: 0;
+				filter: blur(10px);
+				transform: translateY(18px);
+			}
+
+			to {
+				opacity: 1;
+				filter: blur(0);
+				transform: translateY(0);
+			}
+		}
+
+		.keyword.active,
+		.bullet.active {
+			transform: translateY(-8px) scale(1.04);
+			background: rgba(251, 191, 36, 0.22);
+			box-shadow:
+				inset 0 -4px 0 #fbbf24,
+				0 0 24px rgba(251, 191, 36, 0.34);
+			transition: transform 0.28s ease, background 0.28s ease, box-shadow 0.28s ease;
+		}
+
+		.sceneBody.settled .keyword,
+		.sceneBody.settled .bullet {
+			animation: subtleBreath 5.5s ease-in-out infinite;
+		}
+
+		@keyframes subtleBreath {
+
+			0%,
+			100% {
+				background: rgba(255, 255, 255, 0.13);
+				border-color: rgba(255, 255, 255, 0.22);
+				box-shadow:
+					inset 0 -3px 0 rgba(251, 191, 36, 0.42),
+					0 0 0 rgba(251, 191, 36, 0);
+			}
+
+			50% {
+				background: rgba(255, 255, 255, 0.18);
+				border-color: rgba(251, 191, 36, 0.34);
+				box-shadow:
+					inset 0 -3px 0 rgba(251, 191, 36, 0.58),
+					0 10px 24px rgba(15, 23, 42, 0.12);
+			}
+		}
+
+		.btn-download {
+			background: linear-gradient(135deg, #059669, #10b981);
+			box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+			transition: all 0.2s ease;
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+		}
+		.btn-download:hover {
+			background: linear-gradient(135deg, #047857, #059669);
+			box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+			transform: translateY(-1px);
+		}
+
+		/* Modal styling */
+		.modal-overlay {
+			position: fixed;
+			inset: 0;
+			background: rgba(15, 23, 42, 0.85);
+			backdrop-filter: blur(8px);
+			z-index: 9999;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.3s ease;
+		}
+		.modal-overlay.active {
+			opacity: 1;
+			pointer-events: auto;
+		}
+		.modal-content {
+			background: radial-gradient(circle at 50% 0%, #1e293b, #0f172a);
+			border: 1px solid #334155;
+			border-radius: 20px;
+			width: 90vw;
+			max-width: 550px;
+			padding: 32px;
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+			transform: scale(0.95);
+			transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+			text-align: center;
+			font-family: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+		}
+		.modal-overlay.active .modal-content {
+			transform: scale(1);
+		}
+		.modal-title {
+			font-size: 24px;
+			font-weight: 800;
+			color: #38bdf8;
+			margin: 0 0 16px;
+		}
+		.modal-body {
+			color: #cbd5e1;
+			font-size: 15px;
+			line-height: 1.6;
+			margin-bottom: 24px;
+			text-align: left;
+		}
+		.code-block {
+			background: #020617;
+			border: 1px solid #1e293b;
+			padding: 12px;
+			border-radius: 8px;
+			font-family: Consolas, Monaco, monospace;
+			color: #a7f3d0;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin: 12px 0;
+			font-size: 14px;
+		}
+		.copy-btn {
+			background: #1e293b;
+			border: 1px solid #334155;
+			color: #cbd5e1;
+			padding: 4px 8px;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 12px;
+		}
+		.copy-btn:hover {
+			background: #334155;
+			color: white;
+		}
+		.modal-buttons {
+			display: flex;
+			gap: 12px;
+			justify-content: flex-end;
+		}
+	</style>
+</head>
+
+<body>
+	<h2 class="preview-title">InsightED Infrastructure Progress Monitoring Guide</h2>
+	<p class="preview-note">Interactive preview of the infrastructure status registration, logical gateways, and construction logs.</p>
+
+	<div id="player-container">
+		<div id="canvas-frame" class="videoRoot scene">
+			<div class="grid"></div>
+			<div class="glow glowOne"></div>
+			<div class="glow glowTwo"></div>
+
+			<div class="textStage" id="text-stage">
+				<div class="brandLine" style="display: flex; align-items: center;">
+					<img src="https://raw.githubusercontent.com/sebtcheng/insighted-remotion/main/public/InsightED_logo.png" alt="InsightED Logo" style="height: 140px; width: auto; object-fit: contain; filter: drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff);" />
+				</div>
+
+				<div class="sceneBody" id="scene-body">
+					<div class="kicker" id="kicker-el">KICKER</div>
+					<h1 class="title" id="title-el">Title</h1>
+					<div class="keywordRow" id="keyword-row"></div>
+					<ul class="bulletList" id="bullet-list"></ul>
+					<div class="caption" id="caption-el"></div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div id="controls">
+		<div id="scene-selector"></div>
+		<div style="display: flex; align-items: center; width: 100%; gap: 12px; flex-wrap: wrap;">
+			<button class="btn" id="play-pause-btn">Play</button>
+			<button class="btn btn-secondary" id="prev-btn">Prev</button>
+			<input type="range" class="timeline-slider" id="timeline" min="0" max="10056" value="0">
+			<button class="btn btn-secondary" id="next-btn">Next</button>
+			<button class="btn btn-download" id="download-btn">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+				Download MP4
+			</button>
+			<div style="font-family: monospace; min-width: 100px; text-align: right;" id="time-display">0.0s / 335.2s</div>
+		</div>
+	</div>
+
+	<!-- Download Instruction Modal -->
+	<div class="modal-overlay" id="download-modal">
+		<div class="modal-content">
+			<h3 class="modal-title" id="modal-title-el">Access your MP4 Video</h3>
+			<div class="modal-body">
+				<div id="file-protocol-warning" style="display: none; margin-bottom: 16px; border-left: 4px solid #f59e0b; padding-left: 12px; text-align: left; color: #fbbf24;">
+					<strong>Browser Security Limit:</strong> Direct downloads are blocked when opening HTML files locally (<code>file://</code>).
+				</div>
+				<p style="text-align: left;">If you have already rendered the video, you can find it directly in your project folder:</p>
+				<div class="code-block">
+					<span id="video-path-text">public/InsightEDInfrastructure.mp4</span>
+					<button class="copy-btn" id="copy-path-btn">Copy Path</button>
+				</div>
+				
+				<hr style="border-color: #334155; margin: 20px 0;" />
+				
+				<p style="text-align: left;">To render or update the MP4 video, run this command in your terminal:</p>
+				<div class="code-block">
+					<span id="cmd-text">npm run render-infra</span>
+					<button class="copy-btn" id="copy-cmd-btn">Copy</button>
+				</div>
+				<p style="font-size: 13px; color: #94a3b8; margin-top: 8px; text-align: left;">This compiles the Remotion composition with all transitions, audio, and styles into the <code>public/</code> folder.</p>
+			</div>
+			<div class="modal-buttons">
+				<button class="btn btn-secondary" id="close-modal-btn">Close</button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const scenes = [
+			{
+				start: 0,
+				end: 35.3,
+				kicker: "InsightED Mobile App",
+				title: "Infrastructure Progress Monitoring Guide",
+				keywords: ["Mobile Workflow", "Register Projects", "Verifiable Updates"],
+				bullets: [
+					{
+						title: "Digital Record",
+						description: "One project equals one complete digital record integrating procurement, construction, and physical evidence.",
+					},
+					{
+						title: "Gate Rule",
+						description: "Enforces logic-based unlocking: construction monitoring begins only after validated procurement.",
+					},
+					{
+						title: "Evidence-Based",
+						description: "Progress updates supported by geo-tagged photos and checklist validation.",
+					},
+				],
+				caption: "",
+				variant: "enter-rise",
+			},
+			{
+				start: 35.3,
+				end: 68.0,
+				kicker: "Phase 1: Setup & Gate Rule",
+				title: "Setup & Gate Rule",
+				keywords: ["PWA", "DepEd Email", "GPS & Camera", "Gate Rule"],
+				bullets: [
+					{
+						title: "Mobile Setup",
+						description: "Install the PWA to your home screen; log in with official DepEd emails and grant GPS/camera permissions.",
+					},
+					{
+						title: "Procurement Data",
+						description: "Encode Project ID, implementing unit, contractor info, and contract/milestone dates.",
+					},
+					{
+						title: "Verification Gateway",
+						description: "Enforces date order (NOA -> NTP -> Start) to unlock the construction tab.",
+					},
+				],
+				caption: "",
+				variant: "enter-swipe",
+			},
+			{
+				start: 68.0,
+				end: 103.1,
+				kicker: "Phase 2: Construction Logs",
+				title: "Progress & Outcomes",
+				keywords: ["Project Cards", "Objective Matrix", "Geotagged Proof"],
+				bullets: [
+					{
+						title: "Construction Update",
+						description: "Select project status (Ongoing, Suspended, For Inspection) and submit progress logs.",
+					},
+					{
+						title: "Objective Matrix",
+						description: "Tally completed milestones (foundations, roofing) to calculate actual completion percentage.",
+					},
+					{
+						title: "Geotagged Evidence",
+						description: "Upload multi-angle photos with automatically validated coordinates.",
+					},
+				],
+				caption: "",
+				variant: "enter-zoom",
+			},
+			{
+				start: 103.1,
+				end: 137.5,
+				kicker: "Slide 03: Phase 1",
+				title: "Phase 1: Setup & Access",
+				keywords: ["PWA Setup", "DepEd Email", "Camera & GPS"],
+				bullets: [
+					{
+						title: "PWA Setup",
+						description: "Install the app directly to your home screen for lightweight field reporting.",
+					},
+					{
+						title: "Account Registration",
+						description: "Restricted to official DepEd emails (Division Engineers) for traceability.",
+					},
+					{
+						title: "Camera & GPS",
+						description: "Grant device permissions to capture live geotagged physical evidence.",
+					},
+				],
+				caption: "",
+				variant: "enter-zoom",
+			},
+			{
+				start: 137.5,
+				end: 176.2,
+				kicker: "Slide 04: Requirements",
+				title: "Procurement Requirements",
+				keywords: ["ID & Timeline", "Execution Steps", "Entity & Cost"],
+				bullets: [
+					{
+						title: "ID & Timeline",
+						description: "Encode Project ID, PCAB license, and contract/milestone dates.",
+					},
+					{
+						title: "Execution Steps",
+						description: "Record invitation to bid, pre-bid conference, and post-qualification logs.",
+					},
+					{
+						title: "Entity & Cost",
+						description: "Verify contractor name, awarded contract amount, and funding sources.",
+					},
+				],
+				caption: "",
+				variant: "enter-blur",
+			},
+			{
+				start: 176.2,
+				end: 208.9,
+				kicker: "Slide 05: Gateway",
+				title: "Setup & Gate Rule",
+				keywords: ["Gate Rule", "Chronological Checks", "Duplicate Checks"],
+				bullets: [
+					{
+						title: "Logical Gate",
+						description: "Construction monitoring tab is locked until procurement details are verified.",
+					},
+					{
+						title: "Date Consistency",
+						description: "System verifies the date sequence (NOA -> NTP -> Planned Start).",
+					},
+					{
+						title: "Prevention",
+						description: "Blocks duplicate project registrations and ensures financial integrity.",
+					},
+				],
+				caption: "",
+				variant: "enter-swipe",
+			},
+			{
+				start: 208.9,
+				end: 236.9,
+				kicker: "Slide 06: Phase 2",
+				title: "Phase 2: Construction Logs",
+				keywords: ["Project Cards", "Update Percentage", "Status & Remarks"],
+				bullets: [
+					{
+						title: "Find Project",
+						description: "Search by school, code, or name to access active monitoring cards.",
+					},
+					{
+						title: "Update Status",
+						description: "Mark project state: Ongoing, Suspended, or For Inspection with remarks.",
+					},
+					{
+						title: "Calculations",
+						description: "Tally milestones; app calculates completion percentage dynamically.",
+					},
+				],
+				caption: "",
+				variant: "enter-rise",
+			},
+			{
+				start: 236.9,
+				end: 271.9,
+				kicker: "Slide 07: Matrix",
+				title: "Objective Matrix Tally",
+				keywords: ["Checklist", "Milestone Weights", "Live Estimator"],
+				bullets: [
+					{
+						title: "Milestone Weights",
+						description: "Prep (5%), Foundations (15%), Framing (20%), Roofing (15%), Masonry (25%), Finishing (20%).",
+					},
+					{
+						title: "Objective Calculations",
+						description: "Progress is computed strictly from completed work items, avoiding guesswork.",
+					},
+					{
+						title: "Validation Rules",
+						description: "Every checked milestone item triggers a specific validation check requirement.",
+					},
+				],
+				caption: "",
+				variant: "enter-zoom",
+			},
+			{
+				start: 271.9,
+				end: 303.1,
+				kicker: "Slide 08: Evidence",
+				title: "Photo Evidence Specs",
+				keywords: ["Geotagged Metadata", "Angle Coverage", "Validation Match"],
+				bullets: [
+					{
+						title: "Geotag Validation",
+						description: "System reads image metadata to verify coordinates and timestamps match the site.",
+					},
+					{
+						title: "Angle Coverage",
+						description: "Upload internal and external construction photos from 2-3 distinct angles.",
+					},
+					{
+						title: "Validation Match",
+						description: "Ensures physical proof matches the reported accomplishment matrix.",
+					},
+				],
+				caption: "",
+				variant: "enter-blur",
+			},
+			{
+				start: 303.1,
+				end: 335.2,
+				kicker: "Slide 09: Outcome",
+				title: "Impact & Accountability",
+				keywords: ["Data Integrity", "Operational Speed", "Traceable Audit Trail"],
+				bullets: [
+					{
+						title: "Data Integrity",
+						description: "Enforces complete audit history and prevents reporting gaps.",
+					},
+					{
+						title: "Operational Speed",
+						description: "Accelerates division consolidation and eliminates manual updates.",
+					},
+					{
+						title: "Accountability",
+						description: "Provides clear proof of who updated what, when, and where.",
+					},
+				],
+				caption: "",
+				variant: "enter-swipe",
+			},
+		];
+
+		const fps = 30;
+		const totalFrames = 10056;
+		const beatFrames = 3 * fps;
+		let currentFrame = 0;
+		let isPlaying = false;
+		let playInterval = null;
+		let lastSceneIndex = -1;
+
+		let audioPathPrefix = './public';
+		const audio = new Audio();
+		audio.addEventListener('error', (e) => {
+			console.error("Audio failed to load: ", audio.src, e);
+			if (audioPathPrefix === './public') {
+				console.log("Switching audio path prefix to relative root (removing /public)");
+				audioPathPrefix = '.';
+				lastSceneIndex = -1; // force reload
+				jumpToFrame(currentFrame);
+			}
+		});
+
+		let bgmPathPrefix = './public';
+		const bgmAudio = new Audio(`${bgmPathPrefix}/audio_tracks/InsightED_Video_BGM.mp3`);
+		bgmAudio.addEventListener('error', (e) => {
+			console.error("BGM failed to load: ", bgmAudio.src, e);
+			if (bgmPathPrefix === './public') {
+				console.log("Switching BGM path prefix to relative root (removing /public)");
+				bgmPathPrefix = '.';
+				bgmAudio.src = `${bgmPathPrefix}/audio_tracks/InsightED_Video_BGM.mp3`;
+				bgmAudio.load();
+				if (isPlaying) {
+					bgmAudio.play().catch(err => console.log("BGM Playback deferred: ", err));
+				}
+			}
+		});
+		bgmAudio.loop = true;
+		bgmAudio.volume = 0.15;
+
+		function syncAudio(sceneIndex, localFrame) {
+			if (sceneIndex < 0 || sceneIndex > 9) {
+				audio.pause();
+				audio.src = "";
+				return;
+			}
+			const src = `${audioPathPrefix}/audio_tracks/infra/infra${sceneIndex + 1}.mp3`;
+			const absoluteSrc = new URL(src, window.location.href).href;
+			if (audio.src !== absoluteSrc) {
+				audio.src = absoluteSrc;
+				audio.load();
+			}
+			const localSeconds = localFrame / fps;
+			const offset = 0.5;
+			const targetTime = localSeconds - offset;
+			if (targetTime < 0) {
+				audio.pause();
+				audio.currentTime = 0;
+				return;
+			}
+			if (audio.duration && targetTime >= audio.duration) {
+				audio.pause();
+				audio.currentTime = audio.duration;
+				return;
+			}
+			if (Math.abs(audio.currentTime - targetTime) > 0.15) {
+				audio.currentTime = targetTime;
+			}
+			if (isPlaying) {
+				if (audio.paused) {
+					audio.play().catch(e => console.log("Audio playback deferred for user gesture: ", e));
+				}
+			} else {
+				audio.pause();
+			}
+		}
+
+		const canvasFrame = document.getElementById("canvas-frame");
+		const container = document.getElementById("player-container");
+		const timeline = document.getElementById("timeline");
+		const timeDisplay = document.getElementById("time-display");
+		const playPauseBtn = document.getElementById("play-pause-btn");
+		const prevBtn = document.getElementById("prev-btn");
+		const nextBtn = document.getElementById("next-btn");
+		const sceneSelector = document.getElementById("scene-selector");
+		const sceneBody = document.getElementById("scene-body");
+		const kickerEl = document.getElementById("kicker-el");
+		const titleEl = document.getElementById("title-el");
+		const keywordRow = document.getElementById("keyword-row");
+		const bulletList = document.getElementById("bullet-list");
+		const captionEl = document.getElementById("caption-el");
+
+		function resizeCanvas() {
+			const scaleX = container.clientWidth / 1920;
+			const scaleY = container.clientHeight / 1080;
+			canvasFrame.style.transform = `scale(${Math.min(scaleX, scaleY)})`;
+		}
+
+		window.addEventListener("resize", resizeCanvas);
+		resizeCanvas();
+
+		function buildSceneSelector() {
+			sceneSelector.innerHTML = "";
+			scenes.forEach((scene, index) => {
+				const tab = document.createElement("button");
+				tab.className = "scene-tab";
+				tab.innerText = `Scene ${index + 1}: ${scene.title}`;
+				tab.onclick = () => jumpToFrame(scene.start * fps);
+				sceneSelector.appendChild(tab);
+			});
+		}
+
+		buildSceneSelector();
+
+		function getActiveScene(frame) {
+			const seconds = frame / fps;
+			return scenes.find(scene => seconds >= scene.start && seconds < scene.end) || scenes[scenes.length - 1];
+		}
+
+		function renderScene(scene, sceneIndex) {
+			if (lastSceneIndex === sceneIndex) return;
+			lastSceneIndex = sceneIndex;
+
+			sceneBody.className = `sceneBody ${scene.variant}`;
+			void sceneBody.offsetWidth;
+
+			kickerEl.innerText = scene.kicker;
+			titleEl.innerText = scene.title;
+
+			keywordRow.innerHTML = "";
+			scene.keywords.forEach(keyword => {
+				const item = document.createElement("span");
+				item.className = "keyword";
+				item.innerText = keyword;
+				keywordRow.appendChild(item);
+			});
+
+			bulletList.innerHTML = "";
+			scene.bullets.forEach(bullet => {
+				const item = document.createElement("li");
+				item.className = "bullet";
+				item.innerHTML = `
+					<div class="bulletText">
+						<span class="bulletTitle">${bullet.title}</span>
+						<span class="bulletDescription">${bullet.description}</span>
+					</div>
+				`;
+				bulletList.appendChild(item);
+			});
+
+			captionEl.innerText = scene.caption;
+			captionEl.style.display = scene.caption ? "block" : "none";
+		}
+
+		function applyBeat(scene, sceneIndex, localFrame) {
+			sceneBody.classList.toggle("settled", localFrame > 30);
+		}
+
+		function updateFrame(frame) {
+			currentFrame = Math.max(0, Math.min(totalFrames, frame));
+			timeline.value = currentFrame;
+
+			const seconds = currentFrame / fps;
+			timeDisplay.innerText = `${seconds.toFixed(1)}s / ${(totalFrames / fps).toFixed(1)}s`;
+
+			const scene = getActiveScene(currentFrame);
+			const sceneIndex = scenes.indexOf(scene);
+			const sceneFrameDuration = (scene.end - scene.start) * fps;
+			const localFrame = currentFrame - scene.start * fps;
+
+			renderScene(scene, sceneIndex);
+			applyBeat(scene, sceneIndex, localFrame);
+
+			// Slide smooth cross-fade transition
+			const duration = (scene.end - scene.start) * fps;
+			let opacity = 1;
+			const fadeFrames = 15; // 0.5s fade duration
+			if (localFrame < fadeFrames) {
+				opacity = localFrame / fadeFrames;
+			} else if (localFrame > duration - fadeFrames) {
+				opacity = (duration - localFrame) / fadeFrames;
+			}
+			canvasFrame.style.opacity = opacity;
+
+			syncAudio(sceneIndex, localFrame);
+
+			if (isPlaying) {
+				if (bgmAudio.paused) {
+					bgmAudio.play().catch(e => console.log("BGM playback deferred: ", e));
+				}
+			} else {
+				bgmAudio.pause();
+			}
+
+			document.querySelectorAll(".scene-tab").forEach((tab, index) => {
+				if (index === sceneIndex) {
+					tab.classList.add("active");
+					tab.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+				} else {
+					tab.classList.remove("active");
+				}
+			});
+		}
+
+		// Initial render call
+		updateFrame(0);
+
+		function jumpToFrame(frame) {
+			lastSceneIndex = -1; // Force re-render on jump
+			updateFrame(frame);
+		}
+
+		function play() {
+			if (isPlaying) return;
+			isPlaying = true;
+			playPauseBtn.innerText = "Pause";
+			playPauseBtn.classList.add("active");
+			updateFrame(currentFrame);
+			playInterval = setInterval(() => {
+				if (currentFrame >= totalFrames) {
+					currentFrame = 0;
+				}
+				updateFrame(currentFrame + 1);
+			}, 1000 / fps);
+		}
+
+		function pause() {
+			if (!isPlaying) return;
+			isPlaying = false;
+			playPauseBtn.innerText = "Play";
+			playPauseBtn.classList.remove("active");
+			clearInterval(playInterval);
+			audio.pause();
+			bgmAudio.pause();
+		}
+
+		playPauseBtn.onclick = () => isPlaying ? pause() : play();
+
+		timeline.oninput = event => {
+			pause();
+			const frame = parseInt(event.target.value, 10);
+			jumpToFrame(frame);
+		};
+
+		prevBtn.onclick = () => {
+			pause();
+			const index = scenes.indexOf(getActiveScene(currentFrame));
+			jumpToFrame(index > 0 ? scenes[index - 1].start * fps : 0);
+		};
+
+		nextBtn.onclick = () => {
+			pause();
+			const index = scenes.indexOf(getActiveScene(currentFrame));
+			jumpToFrame(index < scenes.length - 1 ? scenes[index + 1].start * fps : 0);
+		};
+
+		// Download Modal Handlers
+		const downloadBtn = document.getElementById("download-btn");
+		const downloadModal = document.getElementById("download-modal");
+		const closeModalBtn = document.getElementById("close-modal-btn");
+		const copyCmdBtn = document.getElementById("copy-cmd-btn");
+		const copyPathBtn = document.getElementById("copy-path-btn");
+		const fileWarning = document.getElementById("file-protocol-warning");
+
+		downloadBtn.onclick = async () => {
+			pause();
+			const videoUrl = "./public/InsightEDInfrastructure.mp4";
+			if (window.location.protocol === "file:") {
+				// Prevent direct download browser block/corruption, show details modal instead
+				fileWarning.style.display = "block";
+				downloadModal.classList.add("active");
+				return;
+			}
+			fileWarning.style.display = "none";
+			try {
+				const response = await fetch(videoUrl, { method: "HEAD" });
+				if (response.ok) {
+					const a = document.createElement("a");
+					a.href = videoUrl;
+					a.download = "InsightEDInfrastructure.mp4";
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+				} else {
+					downloadModal.classList.add("active");
+				}
+			} catch (err) {
+				downloadModal.classList.add("active");
+			}
+		};
+
+		closeModalBtn.onclick = () => {
+			downloadModal.classList.remove("active");
+		};
+
+		downloadModal.onclick = (e) => {
+			if (e.target === downloadModal) {
+				downloadModal.classList.remove("active");
+			}
+		};
+
+		copyCmdBtn.onclick = () => {
+			navigator.clipboard.writeText("npm run render-infra").then(() => {
+				copyCmdBtn.innerText = "Copied!";
+				setTimeout(() => {
+					copyCmdBtn.innerText = "Copy";
+				}, 2000);
+			});
+		};
+
+		copyPathBtn.onclick = () => {
+			navigator.clipboard.writeText("public\\InsightEDInfrastructure.mp4").then(() => {
+				copyPathBtn.innerText = "Copied!";
+				setTimeout(() => {
+					copyPathBtn.innerText = "Copy Path";
+				}, 2000);
+			});
+		};
+	</script>
+</body>
+
+</html>
