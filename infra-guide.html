@@ -908,31 +908,16 @@
 		let playInterval = null;
 		let lastSceneIndex = -1;
 
-		let audioPathPrefix = './public';
+		let audioPathPrefix = 'https://raw.githubusercontent.com/sebtcheng/insighted-remotion/main/public';
 		const audio = new Audio();
 		audio.addEventListener('error', (e) => {
 			console.error("Audio failed to load: ", audio.src, e);
-			if (audioPathPrefix === './public') {
-				console.log("Switching audio path prefix to relative root (removing /public)");
-				audioPathPrefix = '.';
-				lastSceneIndex = -1; // force reload
-				jumpToFrame(currentFrame);
-			}
 		});
 
-		let bgmPathPrefix = './public';
+		let bgmPathPrefix = 'https://raw.githubusercontent.com/sebtcheng/insighted-remotion/main/public';
 		const bgmAudio = new Audio(`${bgmPathPrefix}/audio_tracks/InsightED_Video_BGM.mp3`);
 		bgmAudio.addEventListener('error', (e) => {
 			console.error("BGM failed to load: ", bgmAudio.src, e);
-			if (bgmPathPrefix === './public') {
-				console.log("Switching BGM path prefix to relative root (removing /public)");
-				bgmPathPrefix = '.';
-				bgmAudio.src = `${bgmPathPrefix}/audio_tracks/InsightED_Video_BGM.mp3`;
-				bgmAudio.load();
-				if (isPlaying) {
-					bgmAudio.play().catch(err => console.log("BGM Playback deferred: ", err));
-				}
-			}
 		});
 		bgmAudio.loop = true;
 		bgmAudio.volume = 0.15;
