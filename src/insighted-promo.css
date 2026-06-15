@@ -613,7 +613,8 @@
 /* SIIF Unified Interactive Slideshow Styles */
 .sceneBody {
 	display: grid;
-	align-content: center;
+	align-content: start;
+	margin-top: 36px;
 	max-width: 1030px;
 }
 

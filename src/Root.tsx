@@ -1,22 +1,22 @@
 import React from "react";
 import {Composition} from "remotion";
-import {InsightEDPromo} from "./InsightEDPromo";
-import {SIIFGuidePromo} from "./SIIFGuidePromo";
+import {InsightEDIntroduction} from "./InsightEDIntroduction";
+import {SIIFUserGuide} from "./SIIFUserGuide";
 
 export const RemotionRoot: React.FC = () => {
 	return (
 		<>
 			<Composition
-				id="InsightEDPromo"
-				component={InsightEDPromo}
-				durationInFrames={6150}
+				id="InsightEDIntroduction"
+				component={InsightEDIntroduction}
+				durationInFrames={4036}
 				fps={30}
 				width={1920}
 				height={1080}
 			/>
 			<Composition
-				id="SIIFGuidePromo"
-				component={SIIFGuidePromo}
+				id="SIIFUserGuide"
+				component={SIIFUserGuide}
 				durationInFrames={8790}
 				fps={30}
 				width={1920}

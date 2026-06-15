@@ -208,7 +208,8 @@
 
 		.sceneBody {
 			display: grid;
-			align-content: center;
+			align-content: start;
+			margin-top: 36px;
 			max-width: 1030px;
 		}
 
@@ -498,6 +499,99 @@
 					0 10px 24px rgba(15, 23, 42, 0.12);
 			}
 		}
+
+		.btn-download {
+			background: linear-gradient(135deg, #059669, #10b981);
+			box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+			transition: all 0.2s ease;
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+		}
+		.btn-download:hover {
+			background: linear-gradient(135deg, #047857, #059669);
+			box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+			transform: translateY(-1px);
+		}
+
+		/* Modal styling */
+		.modal-overlay {
+			position: fixed;
+			inset: 0;
+			background: rgba(15, 23, 42, 0.85);
+			backdrop-filter: blur(8px);
+			z-index: 9999;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.3s ease;
+		}
+		.modal-overlay.active {
+			opacity: 1;
+			pointer-events: auto;
+		}
+		.modal-content {
+			background: radial-gradient(circle at 50% 0%, #1e293b, #0f172a);
+			border: 1px solid #334155;
+			border-radius: 20px;
+			width: 90vw;
+			max-width: 550px;
+			padding: 32px;
+			box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+			transform: scale(0.95);
+			transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+			text-align: center;
+			font-family: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+		}
+		.modal-overlay.active .modal-content {
+			transform: scale(1);
+		}
+		.modal-title {
+			font-size: 24px;
+			font-weight: 800;
+			color: #38bdf8;
+			margin: 0 0 16px;
+		}
+		.modal-body {
+			color: #cbd5e1;
+			font-size: 15px;
+			line-height: 1.6;
+			margin-bottom: 24px;
+			text-align: left;
+		}
+		.code-block {
+			background: #020617;
+			border: 1px solid #1e293b;
+			padding: 12px;
+			border-radius: 8px;
+			font-family: Consolas, Monaco, monospace;
+			color: #a7f3d0;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin: 12px 0;
+			font-size: 14px;
+		}
+		.copy-btn {
+			background: #1e293b;
+			border: 1px solid #334155;
+			color: #cbd5e1;
+			padding: 4px 8px;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 12px;
+		}
+		.copy-btn:hover {
+			background: #334155;
+			color: white;
+		}
+		.modal-buttons {
+			display: flex;
+			gap: 12px;
+			justify-content: flex-end;
+		}
 	</style>
 </head>
 
@@ -512,13 +606,8 @@
 			<div class="glow glowTwo"></div>
 
 			<div class="textStage" id="text-stage">
-				<div class="brandLine">
-					<div class="logoPill">i</div>
-					<div>
-						<div class="brandText"><span class="brandInsight">Insight</span><span class="brandEd">ED</span>
-						</div>
-						<div style="color: rgba(255,255,255,0.82); font-weight: 800; font-size: 20px;">SIIF Integrated Slideshow</div>
-					</div>
+				<div class="brandLine" style="display: flex; align-items: center;">
+					<img src="./public/InsightED_logo.png" alt="InsightED Logo" style="height: 220px; width: auto; object-fit: contain; filter: drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff);" />
 				</div>
 
 				<div class="sceneBody" id="scene-body">
@@ -535,12 +624,45 @@
 
 	<div id="controls">
 		<div id="scene-selector"></div>
-		<div style="display: flex; align-items: center; width: 100%; gap: 12px;">
+		<div style="display: flex; align-items: center; width: 100%; gap: 12px; flex-wrap: wrap;">
 			<button class="btn" id="play-pause-btn">Play</button>
 			<button class="btn btn-secondary" id="prev-btn">Prev</button>
 			<input type="range" class="timeline-slider" id="timeline" min="0" max="8790" value="0">
 			<button class="btn btn-secondary" id="next-btn">Next</button>
+			<button class="btn btn-download" id="download-btn">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+				Download MP4
+			</button>
 			<div style="font-family: monospace; min-width: 100px; text-align: right;" id="time-display">0.0s / 293.0s</div>
+		</div>
+	</div>
+
+	<!-- Download Instruction Modal -->
+	<div class="modal-overlay" id="download-modal">
+		<div class="modal-content">
+			<h3 class="modal-title" id="modal-title-el">Access your MP4 Video</h3>
+			<div class="modal-body">
+				<div id="file-protocol-warning" style="display: none; margin-bottom: 16px; border-left: 4px solid #f59e0b; padding-left: 12px; text-align: left; color: #fbbf24;">
+					<strong>Browser Security Limit:</strong> Direct downloads are blocked when opening HTML files locally (<code>file://</code>).
+				</div>
+				<p style="text-align: left;">If you have already rendered the video, you can find it directly in your project folder:</p>
+				<div class="code-block">
+					<span id="video-path-text">public/SIIFUserGuide.mp4</span>
+					<button class="copy-btn" id="copy-path-btn">Copy Path</button>
+				</div>
+				
+				<hr style="border-color: #334155; margin: 20px 0;" />
+				
+				<p style="text-align: left;">To render or update the MP4 video, run this command in your terminal:</p>
+				<div class="code-block">
+					<span id="cmd-text">npm run render-siif</span>
+					<button class="copy-btn" id="copy-cmd-btn">Copy</button>
+				</div>
+				<p style="font-size: 13px; color: #94a3b8; margin-top: 8px; text-align: left;">This compiles the Remotion composition with all transitions, audio, and styles into the <code>public/</code> folder.</p>
+			</div>
+			<div class="modal-buttons">
+				<button class="btn btn-secondary" id="close-modal-btn">Close</button>
+			</div>
 		</div>
 	</div>
 
@@ -858,6 +980,9 @@
 		let lastSceneIndex = -1;
 
 		const audio = new Audio();
+		const bgmAudio = new Audio("https://raw.githubusercontent.com/sebtcheng/insighted-remotion/main/public/audio_tracks/InsightED_Video_BGM.mp3");
+		bgmAudio.loop = true;
+		bgmAudio.volume = 0.15;
 
 		function syncAudio(sceneIndex, localFrame) {
 			if (sceneIndex < 0 || sceneIndex > 12) {
@@ -865,8 +990,8 @@
 				audio.src = "";
 				return;
 			}
-			const src = `./public/audio_tracks/siif/siifslide${sceneIndex + 1}.mp3`;
-			if (audio.src !== new URL(src, window.location.href).href) {
+			const src = `https://raw.githubusercontent.com/sebtcheng/insighted-remotion/main/public/audio_tracks/siif/siifslide${sceneIndex + 1}.mp3`;
+			if (audio.src !== src) {
 				audio.src = src;
 				audio.load();
 			}
@@ -1005,6 +1130,14 @@
 
 			syncAudio(sceneIndex, localFrame);
 
+			if (isPlaying) {
+				if (bgmAudio.paused) {
+					bgmAudio.play().catch(e => console.log("BGM playback deferred: ", e));
+				}
+			} else {
+				bgmAudio.pause();
+			}
+
 			document.querySelectorAll(".scene-tab").forEach((tab, index) => {
 				if (index === sceneIndex) {
 					tab.classList.add("active");
@@ -1044,6 +1177,7 @@
 			playPauseBtn.classList.remove("active");
 			clearInterval(playInterval);
 			audio.pause();
+			bgmAudio.pause();
 		}
 
 		playPauseBtn.onclick = () => isPlaying ? pause() : play();
@@ -1064,6 +1198,69 @@
 			pause();
 			const index = scenes.indexOf(getActiveScene(currentFrame));
 			jumpToFrame(index < scenes.length - 1 ? scenes[index + 1].start * fps : 0);
+		};
+
+		// Download Modal Handlers
+		const downloadBtn = document.getElementById("download-btn");
+		const downloadModal = document.getElementById("download-modal");
+		const closeModalBtn = document.getElementById("close-modal-btn");
+		const copyCmdBtn = document.getElementById("copy-cmd-btn");
+		const copyPathBtn = document.getElementById("copy-path-btn");
+		const fileWarning = document.getElementById("file-protocol-warning");
+
+		downloadBtn.onclick = async () => {
+			pause();
+			const videoUrl = "./public/SIIFUserGuide.mp4";
+			if (window.location.protocol === "file:") {
+				// Prevent direct download browser block/corruption, show details modal instead
+				fileWarning.style.display = "block";
+				downloadModal.classList.add("active");
+				return;
+			}
+			fileWarning.style.display = "none";
+			try {
+				const response = await fetch(videoUrl, { method: "HEAD" });
+				if (response.ok) {
+					const a = document.createElement("a");
+					a.href = videoUrl;
+					a.download = "SIIFUserGuide.mp4";
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+				} else {
+					downloadModal.classList.add("active");
+				}
+			} catch (err) {
+				downloadModal.classList.add("active");
+			}
+		};
+
+		closeModalBtn.onclick = () => {
+			downloadModal.classList.remove("active");
+		};
+
+		downloadModal.onclick = (e) => {
+			if (e.target === downloadModal) {
+				downloadModal.classList.remove("active");
+			}
+		};
+
+		copyCmdBtn.onclick = () => {
+			navigator.clipboard.writeText("npm run render-siif").then(() => {
+				copyCmdBtn.innerText = "Copied!";
+				setTimeout(() => {
+					copyCmdBtn.innerText = "Copy";
+				}, 2000);
+			});
+		};
+
+		copyPathBtn.onclick = () => {
+			navigator.clipboard.writeText("public\\SIIFUserGuide.mp4").then(() => {
+				copyPathBtn.innerText = "Copied!";
+				setTimeout(() => {
+					copyPathBtn.innerText = "Copy Path";
+				}, 2000);
+			});
 		};
 	</script>
 </body>
