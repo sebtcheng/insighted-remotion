@@ -401,7 +401,7 @@ export const InsightEDInfrastructure: React.FC = () => {
 
 	return (
 		<AbsoluteFill className="videoRoot">
-			<Audio src={staticFile("audio_tracks/InsightED_Video_BGM.mp3")} volume={0.15} loop />
+			<Audio src={staticFile("audio_tracks/InsightED_Video_BGM.mp3")} volume={0.3} loop />
 			{scenes.map((scene, index) => (
 				<Sequence
 					key={`${scene.start}-${scene.title}`}

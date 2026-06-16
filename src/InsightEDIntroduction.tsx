@@ -10,7 +10,7 @@ import {
 	useVideoConfig,
 } from "remotion";
 import "./insighted-promo.css";
-import { getAnimatedStyle } from "./animations";
+import { getAnimatedStyle, getPhoneAnimatedStyle } from "./animations";
 
 type Bullet = {
 	title: string;
@@ -343,21 +343,26 @@ const scenes: Scene[] = [
 	},
 ];
 
-const SceneLayer: React.FC<{scene: Scene}> = ({scene}) => {
+const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => {
 	const frame = useCurrentFrame();
 	const fps = useVideoConfig().fps;
-	const duration = (scene.end - scene.start) * fps;
-	const opacity = interpolate(
-		frame,
-		[0, 15, duration - 15, duration],
-		[0, 1, 1, 0],
-		{extrapolateLeft: "clamp", extrapolateRight: "clamp"}
-	);
 
 	const isSettled = frame > 30;
 
 	return (
-		<AbsoluteFill className="scene" style={{opacity}}>
+		<AbsoluteFill className="scene">
+			{index === 0 && frame < 15 && (
+				<AbsoluteFill
+					style={{
+						backgroundColor: "white",
+						zIndex: 100,
+						opacity: interpolate(frame, [0, 15], [1, 0], {
+							extrapolateLeft: "clamp",
+							extrapolateRight: "clamp",
+						}),
+					}}
+				/>
+			)}
 			<div className="grid" />
 			<div className="glow glowOne" />
 			<div className="glow glowTwo" />
@@ -406,6 +411,52 @@ const SceneLayer: React.FC<{scene: Scene}> = ({scene}) => {
 					)}
 				</div>
 			</div>
+
+			{index === 0 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+						<Img src={staticFile("image/intro1.png")} alt="Welcome to InsightED" />
+					</div>
+				</div>
+			)}
+			{index === 1 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-1" style={getPhoneAnimatedStyle(frame, fps, 0.12, false)}>
+						<Img src={staticFile("image/intro2.png")} alt="Role-specific portals 1" />
+					</div>
+					<div className="phone-mockup phone-2" style={getPhoneAnimatedStyle(frame, fps, 0.28, false)}>
+						<Img src={staticFile("image/intro2.1.png")} alt="Role-specific portals 2" />
+					</div>
+				</div>
+			)}
+			{index === 2 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+						<Img src={staticFile("image/intro3.png")} alt="Real-time school updates" />
+					</div>
+				</div>
+			)}
+			{index === 4 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+						<Img src={staticFile("image/intro5.png")} alt="Structured project monitoring" />
+					</div>
+				</div>
+			)}
+			{index === 6 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+						<Img src={staticFile("image/intro7.png")} alt="Less manual consolidation" />
+					</div>
+				</div>
+			)}
+			{index === 7 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+						<Img src={staticFile("image/intro8.png")} alt="Verified records for national insight" />
+					</div>
+				</div>
+			)}
 		</AbsoluteFill>
 	);
 };
@@ -415,15 +466,15 @@ export const InsightEDIntroduction: React.FC = () => {
 
 	return (
 		<AbsoluteFill className="videoRoot">
-			<Audio src={staticFile("audio_tracks/InsightED_Video_BGM.mp3")} volume={0.125} loop />
+			<Audio src={staticFile("audio_tracks/InsightED_Video_BGM.mp3")} volume={0.3} loop />
 			{scenes.map((scene, index) => (
 				<Sequence
 					key={`${scene.start}-${scene.title}`}
 					from={scene.start * fps}
-					durationInFrames={(scene.end - scene.start) * fps}
+					durationInFrames={Math.round((scene.end - scene.start) * fps)}
 				>
 					<Audio src={staticFile(`audio_tracks/InsightED_PrimerVid_SL${index + 1}.mp3`)} volume={0.95} />
-					<SceneLayer scene={scene} />
+					<SceneLayer scene={scene} index={index} />
 				</Sequence>
 			))}
 		</AbsoluteFill>

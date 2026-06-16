@@ -592,6 +592,80 @@
 			gap: 12px;
 			justify-content: flex-end;
 		}
+
+		/* Phone mockups styling */
+		.visuals-container {
+			position: absolute;
+			right: 120px;
+			top: 150px;
+			width: 600px;
+			height: 780px;
+			z-index: 10;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.phone-mockup {
+			position: absolute;
+			width: 360px;
+			height: 640px;
+			border-radius: 36px;
+			border: 8px solid #1e293b;
+			box-shadow: 0 24px 50px rgba(0,0,0,0.6);
+			overflow: hidden;
+			background: #000;
+			display: flex;
+			animation: phoneRise 0.62s cubic-bezier(0.16, 1, 0.3, 1) both;
+		}
+		.phone-mockup img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+		.phone-1 {
+			left: -70px;
+			top: 20px;
+			z-index: 10;
+			animation-delay: 0.12s;
+		}
+		.phone-2 {
+			right: -100px;
+			top: 140px;
+			z-index: 11;
+			animation-delay: 0.28s;
+		}
+		@keyframes phoneRise {
+			from {
+				opacity: 0;
+				transform: translateY(80px) rotate(2deg);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0) rotate(0deg);
+			}
+		}
+
+		.phone-center {
+			width: 420px !important;
+			height: 740px !important;
+			border-radius: 40px !important;
+			border-width: 9px !important;
+			left: 32% !important;
+			top: 50%;
+			transform: translate(-50%, -50%) !important;
+			animation: phoneRiseCenter 0.62s cubic-bezier(0.16, 1, 0.3, 1) both;
+		}
+
+		@keyframes phoneRiseCenter {
+			from {
+				opacity: 0;
+				transform: translate(-50%, -40%) rotate(1deg);
+			}
+			to {
+				opacity: 1;
+				transform: translate(-50%, -50%) rotate(0deg);
+			}
+		}
 	</style>
 </head>
 
@@ -601,6 +675,7 @@
 
 	<div id="player-container">
 		<div id="canvas-frame" class="videoRoot scene">
+			<div id="white-overlay" style="position: absolute; inset: 0; background: white; z-index: 100; pointer-events: none; opacity: 0;"></div>
 			<div class="grid"></div>
 			<div class="glow glowOne"></div>
 			<div class="glow glowTwo"></div>
@@ -618,6 +693,8 @@
 					<div class="caption" id="caption-el"></div>
 				</div>
 			</div>
+
+			<div id="slide-visuals"></div>
 
 			<div class="progressTrack">
 				<div class="progressFill" id="progress-fill-el"></div>
@@ -996,7 +1073,7 @@
 
 		const audio = new Audio();
 		const bgm = new Audio('https://raw.githubusercontent.com/sebtcheng/insighted-remotion/main/public/audio_tracks/InsightED_Video_BGM.mp3');
-		bgm.volume = 0.125;
+		bgm.volume = 0.3;
 		bgm.loop = true;
 
 		function syncAudio(sceneIndex, localFrame) {
@@ -1006,7 +1083,7 @@
 				audio.load();
 			}
 			const localSeconds = localFrame / fps;
-			const offset = sceneIndex === 0 ? 2.0 : 0.5;
+			const offset = 0;
 			const targetTime = localSeconds - offset;
 			if (targetTime < 0) {
 				audio.pause();
@@ -1040,6 +1117,8 @@
 		const bulletList = document.getElementById("bullet-list");
 		const captionEl = document.getElementById("caption-el");
 		const progressFillEl = document.getElementById("progress-fill-el");
+		const whiteOverlay = document.getElementById("white-overlay");
+		const slideVisualsEl = document.getElementById("slide-visuals");
 
 		function resizeCanvas() {
 			const scaleX = container.clientWidth / 1920;
@@ -1108,6 +1187,62 @@
 
 			captionEl.innerText = scene.caption;
 			captionEl.style.display = scene.caption ? "block" : "none";
+
+			// Render phone mockups for specific slides
+			if (sceneIndex === 0) {
+				slideVisualsEl.innerHTML = `
+					<div class="visuals-container">
+						<div class="phone-mockup phone-center">
+							<img src="./public/image/intro1.png" alt="Welcome to InsightED" />
+						</div>
+					</div>
+				`;
+			} else if (sceneIndex === 1) {
+				slideVisualsEl.innerHTML = `
+					<div class="visuals-container">
+						<div class="phone-mockup phone-1">
+							<img src="./public/image/intro2.png" alt="Role-specific portals 1" />
+						</div>
+						<div class="phone-mockup phone-2">
+							<img src="./public/image/intro2.1.png" alt="Role-specific portals 2" />
+						</div>
+					</div>
+				`;
+			} else if (sceneIndex === 2) {
+				slideVisualsEl.innerHTML = `
+					<div class="visuals-container">
+						<div class="phone-mockup phone-center">
+							<img src="./public/image/intro3.png" alt="Real-time school updates" />
+						</div>
+					</div>
+				`;
+			} else if (sceneIndex === 4) {
+				slideVisualsEl.innerHTML = `
+					<div class="visuals-container">
+						<div class="phone-mockup phone-center">
+							<img src="./public/image/intro5.png" alt="Structured project monitoring" />
+						</div>
+					</div>
+				`;
+			} else if (sceneIndex === 6) {
+				slideVisualsEl.innerHTML = `
+					<div class="visuals-container">
+						<div class="phone-mockup phone-center">
+							<img src="./public/image/intro7.png" alt="Less manual consolidation" />
+						</div>
+					</div>
+				`;
+			} else if (sceneIndex === 7) {
+				slideVisualsEl.innerHTML = `
+					<div class="visuals-container">
+						<div class="phone-mockup phone-center">
+							<img src="./public/image/intro8.png" alt="Verified records for national insight" />
+						</div>
+					</div>
+				`;
+			} else {
+				slideVisualsEl.innerHTML = "";
+			}
 		}
 
 		function applyBeat(scene, sceneIndex, localFrame) {
@@ -1136,9 +1271,34 @@
 			renderScene(scene, sceneIndex);
 			applyBeat(scene, sceneIndex, localFrame);
 			progressFillEl.style.width = `${progress * 100}%`;
+
+			// Slide smooth cross-fade transition and line swipe (fade-in only, no fade-out)
+			const fadeFrames = 15; // 0.5s transition duration
+			let opacity = 1;
+			let clipPath = "inset(0 0 0 0)";
+			let whiteOverlayOpacity = 0;
+
+			if (sceneIndex === 0) {
+				if (localFrame < fadeFrames) {
+					whiteOverlayOpacity = 1 - (localFrame / fadeFrames);
+				}
+			} else {
+				if (localFrame < fadeFrames) {
+					const progressVal = localFrame / fadeFrames;
+					// easeOutCubic: 1 - (1 - t)^3 for ultra-smooth easing
+					const easedProgress = 1 - Math.pow(1 - progressVal, 3);
+					opacity = progressVal;
+					const clipPercent = 100 - (easedProgress * 100);
+					clipPath = `inset(0 ${clipPercent}% 0 0)`;
+				}
+			}
+			canvasFrame.style.opacity = opacity;
+			canvasFrame.style.clipPath = clipPath;
+			whiteOverlay.style.opacity = whiteOverlayOpacity;
+
 			syncAudio(sceneIndex, localFrame);
 
-			const baseBgmVolume = 0.125;
+			const baseBgmVolume = 0.3;
 			const isNarrationPlaying = !audio.paused && !audio.ended && audio.currentTime > 0;
 			const currentBgmMax = isNarrationPlaying ? (baseBgmVolume * 0.85) : (baseBgmVolume * 1.15);
 
