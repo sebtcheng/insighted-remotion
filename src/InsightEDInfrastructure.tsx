@@ -264,17 +264,27 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 	const frame = useCurrentFrame();
 	const fps = useVideoConfig().fps;
 	const duration = (scene.end - scene.start) * fps;
-	const opacity = index === 0 ? interpolate(
+	
+	const opacity = interpolate(
 		frame,
-		[0, 15, duration - 15, duration],
-		[0, 1, 1, 0],
+		[0, 15],
+		[0, 1],
 		{extrapolateLeft: "clamp", extrapolateRight: "clamp"}
-	) : 1;
+	);
+
+	const clipPercent = interpolate(
+		frame,
+		[0, 15],
+		[100, 0],
+		{extrapolateLeft: "clamp", extrapolateRight: "clamp"}
+	);
+
+	const clipPath = `inset(0 ${clipPercent}% 0 0)`;
 
 	const isSettled = frame > 30;
 
 	return (
-		<AbsoluteFill className="scene" style={{opacity}}>
+		<AbsoluteFill className="scene" style={{opacity, clipPath}}>
 			<div className="grid" />
 			<div className="glow glowOne" />
 			<div className="glow glowTwo" />

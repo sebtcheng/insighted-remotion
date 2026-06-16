@@ -1260,18 +1260,18 @@
 			renderScene(scene, sceneIndex);
 			applyBeat(scene, sceneIndex, localFrame);
 
-			// Slide smooth cross-fade transition (only for Slide 1 to prevent white flash on subsequent slides)
-			const duration = (scene.end - scene.start) * fps;
+			// Slide smooth cross-fade transition and line swipe (fade-in only, no fade-out)
+			const fadeFrames = 15; // 0.5s transition duration
 			let opacity = 1;
-			if (sceneIndex === 0) {
-				const fadeFrames = 15; // 0.5s fade duration
-				if (localFrame < fadeFrames) {
-					opacity = localFrame / fadeFrames;
-				} else if (localFrame > duration - fadeFrames) {
-					opacity = (duration - localFrame) / fadeFrames;
-				}
+			let clipPath = "inset(0 0 0 0)";
+			if (localFrame < fadeFrames) {
+				const progress = localFrame / fadeFrames;
+				opacity = progress;
+				const clipPercent = 100 - (progress * 100);
+				clipPath = `inset(0 ${clipPercent}% 0 0)`;
 			}
 			canvasFrame.style.opacity = opacity;
+			canvasFrame.style.clipPath = clipPath;
 
 			syncAudio(sceneIndex, localFrame);
 
