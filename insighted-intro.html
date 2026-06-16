@@ -707,13 +707,13 @@
 		<div style="display: flex; align-items: center; width: 100%; gap: 12px; flex-wrap: wrap;">
 			<button class="btn" id="play-pause-btn">Play</button>
 			<button class="btn btn-secondary" id="prev-btn">Prev</button>
-			<input type="range" class="timeline-slider" id="timeline" min="0" max="4036" value="0">
+			<input type="range" class="timeline-slider" id="timeline" min="0" max="3991" value="0">
 			<button class="btn btn-secondary" id="next-btn">Next</button>
 			<button class="btn btn-download" id="download-btn">
 				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
 				Download MP4
 			</button>
-			<div style="font-family: monospace; min-width: 100px; text-align: right;" id="time-display">0.0s / 134.5s</div>
+			<div style="font-family: monospace; min-width: 100px; text-align: right;" id="time-display">0.0s / 133.0s</div>
 		</div>
 	</div>
 
@@ -750,7 +750,7 @@
 		const scenes = [
 			{
 				start: 0,
-				end: 11.51,
+				end: 10.01,
 				kicker: "Welcome to",
 				title: "InsightED",
 				keywords: ["Centralized", "Mobile-first", "Validated data"],
@@ -776,8 +776,8 @@
 				variant: "enter-rise",
 			},
 			{
-				start: 11.51,
-				end: 26.12,
+				start: 10.01,
+				end: 24.62,
 				kicker: "One connected flow",
 				title: "Role-specific portals",
 				keywords: ["One data flow", "Shared picture", "Reliable records"],
@@ -803,8 +803,8 @@
 				variant: "enter-swipe",
 			},
 			{
-				start: 26.12,
-				end: 39.24,
+				start: 24.62,
+				end: 37.74,
 				kicker: "For schools",
 				title: "Real-time school updates",
 				keywords: ["School profiles", "Learner counts", "Facilities"],
@@ -830,8 +830,8 @@
 				variant: "enter-clip",
 			},
 			{
-				start: 39.24,
-				end: 48.96,
+				start: 37.74,
+				end: 47.46,
 				kicker: "Offline-first",
 				title: "Prepare now. Sync later.",
 				keywords: ["Offline-first", "Local records", "Auto-sync"],
@@ -853,8 +853,8 @@
 				variant: "enter-zoom",
 			},
 			{
-				start: 48.96,
-				end: 59.29,
+				start: 47.46,
+				end: 57.79,
 				kicker: "For engineers",
 				title: "Structured project monitoring",
 				keywords: ["Inspections", "Geotagged evidence", "Progress reports"],
@@ -880,8 +880,8 @@
 				variant: "enter-blur",
 			},
 			{
-				start: 59.29,
-				end: 69.01,
+				start: 57.79,
+				end: 67.51,
 				kicker: "From field to review",
 				title: "Ground reality becomes planning evidence",
 				keywords: ["Ground reality", "Verified record", "Planning input"],
@@ -907,8 +907,8 @@
 				variant: "enter-swipe",
 			},
 			{
-				start: 69.01,
-				end: 79.88,
+				start: 67.51,
+				end: 78.38,
 				kicker: "For divisions and regions",
 				title: "Less manual consolidation",
 				keywords: ["Review", "Filter", "Validate", "Monitor"],
@@ -934,8 +934,8 @@
 				variant: "enter-rise",
 			},
 			{
-				start: 79.88,
-				end: 92.77,
+				start: 78.38,
+				end: 91.27,
 				kicker: "For central office",
 				title: "Verified records for national insight",
 				keywords: ["National summaries", "Class-size analysis", "Budget visibility"],
@@ -961,8 +961,8 @@
 				variant: "enter-clip",
 			},
 			{
-				start: 92.77,
-				end: 101.55,
+				start: 91.27,
+				end: 100.05,
 				kicker: "More than forms",
 				title: "Usable data sooner",
 				keywords: ["Clearer context", "Stronger accountability", "Faster decisions"],
@@ -984,8 +984,8 @@
 				variant: "enter-zoom",
 			},
 			{
-				start: 101.55,
-				end: 113.83,
+				start: 100.05,
+				end: 112.33,
 				kicker: "Better governance",
 				title: "From delayed reporting to proactive response",
 				keywords: ["Reviewed", "Trusted", "Acted on"],
@@ -1011,8 +1011,8 @@
 				variant: "enter-blur",
 			},
 			{
-				start: 113.83,
-				end: 122.48,
+				start: 112.33,
+				end: 120.98,
 				kicker: "Shared foundation",
 				title: "One foundation for governance",
 				keywords: ["Schools", "Divisions", "Regions", "National offices"],
@@ -1034,8 +1034,8 @@
 				variant: "enter-swipe",
 			},
 			{
-				start: 122.48,
-				end: 134.53,
+				start: 120.98,
+				end: 133.03,
 				kicker: "InsightED",
 				title: "Timely. Validated. Shared.",
 				keywords: ["Governance tool", "Better prepared", "More responsive"],
@@ -1063,7 +1063,7 @@
 		];
 
 		const fps = 30;
-		const totalFrames = 4036;
+		const totalFrames = 3991;
 		const beatFrames = 3 * fps;
 		let currentFrame = 0;
 		let isPlaying = false;
