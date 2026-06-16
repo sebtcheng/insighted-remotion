@@ -2,6 +2,7 @@ import React from "react";
 import {
 	AbsoluteFill,
 	Audio,
+	Easing,
 	Img,
 	interpolate,
 	Sequence,
@@ -265,19 +266,27 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 	const fps = useVideoConfig().fps;
 	const duration = (scene.end - scene.start) * fps;
 	
-	const opacity = interpolate(
-		frame,
-		[0, 15],
-		[0, 1],
-		{extrapolateLeft: "clamp", extrapolateRight: "clamp"}
-	);
+	const opacity = index === 0
+		? 1
+		: interpolate(
+			frame,
+			[0, 15],
+			[0, 1],
+			{extrapolateLeft: "clamp", extrapolateRight: "clamp"}
+		);
 
-	const clipPercent = interpolate(
-		frame,
-		[0, 15],
-		[100, 0],
-		{extrapolateLeft: "clamp", extrapolateRight: "clamp"}
-	);
+	const clipPercent = index === 0
+		? 0
+		: interpolate(
+			frame,
+			[0, 15],
+			[100, 0],
+			{
+				easing: Easing.bezier(0.16, 1, 0.3, 1),
+				extrapolateLeft: "clamp",
+				extrapolateRight: "clamp"
+			}
+		);
 
 	const clipPath = `inset(0 ${clipPercent}% 0 0)`;
 
@@ -285,6 +294,18 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 
 	return (
 		<AbsoluteFill className="scene" style={{opacity, clipPath}}>
+			{index === 0 && frame < 15 && (
+				<AbsoluteFill
+					style={{
+						backgroundColor: "white",
+						zIndex: 100,
+						opacity: interpolate(frame, [0, 15], [1, 0], {
+							extrapolateLeft: "clamp",
+							extrapolateRight: "clamp",
+						}),
+					}}
+				/>
+			)}
 			<div className="grid" />
 			<div className="glow glowOne" />
 			<div className="glow glowTwo" />

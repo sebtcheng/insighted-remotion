@@ -731,6 +731,7 @@
 
 	<div id="player-container">
 		<div id="canvas-frame" class="videoRoot scene">
+			<div id="white-overlay" style="position: absolute; inset: 0; background: white; z-index: 100; pointer-events: none; opacity: 0;"></div>
 			<div class="grid"></div>
 			<div class="glow glowOne"></div>
 			<div class="glow glowTwo"></div>
@@ -1105,6 +1106,7 @@
 		const bulletList = document.getElementById("bullet-list");
 		const captionEl = document.getElementById("caption-el");
 		const slideVisualsEl = document.getElementById("slide-visuals");
+		const whiteOverlay = document.getElementById("white-overlay");
 
 		function resizeCanvas() {
 			const scaleX = container.clientWidth / 1920;
@@ -1264,14 +1266,25 @@
 			const fadeFrames = 15; // 0.5s transition duration
 			let opacity = 1;
 			let clipPath = "inset(0 0 0 0)";
-			if (localFrame < fadeFrames) {
-				const progress = localFrame / fadeFrames;
-				opacity = progress;
-				const clipPercent = 100 - (progress * 100);
-				clipPath = `inset(0 ${clipPercent}% 0 0)`;
+			let whiteOverlayOpacity = 0;
+
+			if (sceneIndex === 0) {
+				if (localFrame < fadeFrames) {
+					whiteOverlayOpacity = 1 - (localFrame / fadeFrames);
+				}
+			} else {
+				if (localFrame < fadeFrames) {
+					const progress = localFrame / fadeFrames;
+					// easeOutCubic: 1 - (1 - t)^3 for ultra-smooth easing
+					const easedProgress = 1 - Math.pow(1 - progress, 3);
+					opacity = progress;
+					const clipPercent = 100 - (easedProgress * 100);
+					clipPath = `inset(0 ${clipPercent}% 0 0)`;
+				}
 			}
 			canvasFrame.style.opacity = opacity;
 			canvasFrame.style.clipPath = clipPath;
+			whiteOverlay.style.opacity = whiteOverlayOpacity;
 
 			syncAudio(sceneIndex, localFrame);
 
