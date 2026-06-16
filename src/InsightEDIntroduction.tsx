@@ -457,6 +457,13 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 					</div>
 				</div>
 			)}
+			{index >= 8 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+						<Img src={staticFile("image/intro1.png")} alt="InsightED Summary" />
+					</div>
+				</div>
+			)}
 		</AbsoluteFill>
 	);
 };
