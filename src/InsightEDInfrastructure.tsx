@@ -260,11 +260,9 @@ const scenes: Scene[] = [
 		variant: "enter-clip",
 	},
 ];
-
 const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => {
 	const frame = useCurrentFrame();
 	const fps = useVideoConfig().fps;
-	const duration = (scene.end - scene.start) * fps;
 	
 	const opacity = index === 0
 		? 1
