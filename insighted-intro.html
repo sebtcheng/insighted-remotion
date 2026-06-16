@@ -696,9 +696,7 @@
 
 			<div id="slide-visuals"></div>
 
-			<div class="progressTrack">
-				<div class="progressFill" id="progress-fill-el"></div>
-			</div>
+
 		</div>
 	</div>
 
@@ -1116,7 +1114,6 @@
 		const keywordRow = document.getElementById("keyword-row");
 		const bulletList = document.getElementById("bullet-list");
 		const captionEl = document.getElementById("caption-el");
-		const progressFillEl = document.getElementById("progress-fill-el");
 		const whiteOverlay = document.getElementById("white-overlay");
 		const slideVisualsEl = document.getElementById("slide-visuals");
 
@@ -1270,7 +1267,6 @@
 
 			renderScene(scene, sceneIndex);
 			applyBeat(scene, sceneIndex, localFrame);
-			progressFillEl.style.width = `${progress * 100}%`;
 
 			// Slide smooth cross-fade transition and line swipe (fade-in only, no fade-out)
 			const fadeFrames = 15; // 0.5s transition duration
