@@ -225,11 +225,11 @@
 
 		.title {
 			font-family: "Quicksand", ui-sans-serif, system-ui, sans-serif;
-			font-size: 86px;
-			line-height: 0.98;
+			font-size: 72px;
+			line-height: 1.15;
 			font-weight: 900;
 			letter-spacing: -0.055em;
-			max-width: 930px;
+			max-width: 1000px;
 			margin: 0;
 			color: #f8fafc;
 			text-shadow: 0 12px 32px rgba(15, 23, 42, 0.24);
@@ -592,6 +592,136 @@
 			gap: 12px;
 			justify-content: flex-end;
 		}
+
+		/* Phone mockups styling */
+		.visuals-container {
+			position: absolute;
+			right: 120px;
+			top: 150px;
+			width: 600px;
+			height: 780px;
+			z-index: 10;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.phone-mockup {
+			position: absolute;
+			width: 360px;
+			height: 640px;
+			border-radius: 36px;
+			border: 8px solid #1e293b;
+			box-shadow: 0 24px 50px rgba(0,0,0,0.6);
+			overflow: hidden;
+			background: #000;
+			display: flex;
+			animation: phoneRise 0.62s cubic-bezier(0.16, 1, 0.3, 1) both;
+		}
+		.phone-mockup img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+		.phone-1 {
+			left: -70px;
+			top: 20px;
+			z-index: 10;
+			animation-delay: 0.12s;
+		}
+		.phone-2 {
+			right: -100px;
+			top: 140px;
+			z-index: 11;
+			animation-delay: 0.28s;
+		}
+		@keyframes phoneRise {
+			from {
+				opacity: 0;
+				transform: translateY(80px) rotate(2deg);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0) rotate(0deg);
+			}
+		}
+		.visuals-container.landscape-layout {
+			right: 60px;
+			top: 250px;
+			width: 800px;
+			height: 550px;
+		}
+		.visuals-container.landscape-layout .phone-mockup {
+			width: 380px;
+			height: 335px;
+			border-radius: 12px;
+			border: none;
+			background: transparent;
+			box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+		}
+		.visuals-container.landscape-layout .phone-1 {
+			left: 0px;
+			top: 0px;
+		}
+		.visuals-container.landscape-layout .phone-2 {
+			right: 0px;
+			top: 160px;
+		}
+
+		/* Browser Mockup Styles */
+		.browser-mockup {
+			display: flex;
+			flex-direction: column;
+			border: 3px solid #1e293b !important;
+			background: #0f172a;
+			border-radius: 12px !important;
+			overflow: hidden;
+		}
+		.browser-header {
+			height: 24px;
+			background: #1e293b;
+			display: flex;
+			align-items: center;
+			padding: 0 10px;
+			gap: 6px;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+			flex-shrink: 0;
+		}
+		.browser-header .dot {
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+		}
+		.browser-header .dot.red { background: #ef4444; }
+		.browser-header .dot.yellow { background: #eab308; }
+		.browser-header .dot.green { background: #22c55e; }
+
+		.browser-mockup img {
+			width: 100%;
+			height: calc(100% - 24px) !important;
+			object-fit: cover !important;
+		}
+
+		.phone-center {
+			width: 420px !important;
+			height: 740px !important;
+			border-radius: 40px !important;
+			border-width: 9px !important;
+			left: 32% !important;
+			top: 50%;
+			transform: translate(-50%, -50%) !important;
+			animation: phoneRiseCenter 0.62s cubic-bezier(0.16, 1, 0.3, 1) both;
+		}
+
+		@keyframes phoneRiseCenter {
+			from {
+				opacity: 0;
+				transform: translate(-50%, -40%) rotate(1deg);
+			}
+			to {
+				opacity: 1;
+				transform: translate(-50%, -50%) rotate(0deg);
+			}
+		}
 	</style>
 </head>
 
@@ -607,7 +737,7 @@
 
 			<div class="textStage" id="text-stage">
 				<div class="brandLine" style="display: flex; align-items: center;">
-					<img src="https://raw.githubusercontent.com/sebtcheng/insighted-remotion/main/public/InsightED_logo.png" alt="InsightED Logo" style="height: 140px; width: auto; object-fit: contain; filter: drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff);" />
+					<img src="https://raw.githubusercontent.com/sebtcheng/insighted-remotion/main/public/InsightED_logo.png" alt="InsightED Logo" style="height: 220px; width: auto; object-fit: contain; filter: drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff);" />
 				</div>
 
 				<div class="sceneBody" id="scene-body">
@@ -619,6 +749,7 @@
 				</div>
 			</div>
 
+			<div id="slide-visuals"></div>
 		</div>
 	</div>
 
@@ -627,13 +758,13 @@
 		<div style="display: flex; align-items: center; width: 100%; gap: 12px; flex-wrap: wrap;">
 			<button class="btn" id="play-pause-btn">Play</button>
 			<button class="btn btn-secondary" id="prev-btn">Prev</button>
-			<input type="range" class="timeline-slider" id="timeline" min="0" max="10056" value="0">
+			<input type="range" class="timeline-slider" id="timeline" min="0" max="10293" value="0">
 			<button class="btn btn-secondary" id="next-btn">Next</button>
 			<button class="btn btn-download" id="download-btn">
 				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
 				Download MP4
 			</button>
-			<div style="font-family: monospace; min-width: 100px; text-align: right;" id="time-display">0.0s / 335.2s</div>
+			<div style="font-family: monospace; min-width: 100px; text-align: right;" id="time-display">0.0s / 343.1s</div>
 		</div>
 	</div>
 
@@ -694,7 +825,7 @@
 			{
 				start: 35.3,
 				end: 68.0,
-				kicker: "Phase 1: Setup & Gate Rule",
+				kicker: "",
 				title: "Setup & Gate Rule",
 				keywords: ["PWA", "DepEd Email", "GPS & Camera", "Gate Rule"],
 				bullets: [
@@ -712,12 +843,12 @@
 					},
 				],
 				caption: "",
-				variant: "enter-swipe",
+				variant: "enter-clip",
 			},
 			{
 				start: 68.0,
 				end: 103.1,
-				kicker: "Phase 2: Construction Logs",
+				kicker: "",
 				title: "Progress & Outcomes",
 				keywords: ["Project Cards", "Objective Matrix", "Geotagged Proof"],
 				bullets: [
@@ -735,12 +866,12 @@
 					},
 				],
 				caption: "",
-				variant: "enter-zoom",
+				variant: "enter-clip",
 			},
 			{
 				start: 103.1,
 				end: 137.5,
-				kicker: "Slide 03: Phase 1",
+				kicker: "",
 				title: "Phase 1: Setup & Access",
 				keywords: ["PWA Setup", "DepEd Email", "Camera & GPS"],
 				bullets: [
@@ -758,12 +889,12 @@
 					},
 				],
 				caption: "",
-				variant: "enter-zoom",
+				variant: "enter-clip",
 			},
 			{
 				start: 137.5,
 				end: 176.2,
-				kicker: "Slide 04: Requirements",
+				kicker: "",
 				title: "Procurement Requirements",
 				keywords: ["ID & Timeline", "Execution Steps", "Entity & Cost"],
 				bullets: [
@@ -781,12 +912,12 @@
 					},
 				],
 				caption: "",
-				variant: "enter-blur",
+				variant: "enter-clip",
 			},
 			{
 				start: 176.2,
 				end: 208.9,
-				kicker: "Slide 05: Gateway",
+				kicker: "",
 				title: "Setup & Gate Rule",
 				keywords: ["Gate Rule", "Chronological Checks", "Duplicate Checks"],
 				bullets: [
@@ -804,12 +935,12 @@
 					},
 				],
 				caption: "",
-				variant: "enter-swipe",
+				variant: "enter-clip",
 			},
 			{
 				start: 208.9,
 				end: 236.9,
-				kicker: "Slide 06: Phase 2",
+				kicker: "",
 				title: "Phase 2: Construction Logs",
 				keywords: ["Project Cards", "Update Percentage", "Status & Remarks"],
 				bullets: [
@@ -827,12 +958,12 @@
 					},
 				],
 				caption: "",
-				variant: "enter-rise",
+				variant: "enter-clip",
 			},
 			{
 				start: 236.9,
-				end: 271.9,
-				kicker: "Slide 07: Matrix",
+				end: 279.8,
+				kicker: "",
 				title: "Objective Matrix Tally",
 				keywords: ["Checklist", "Milestone Weights", "Live Estimator"],
 				bullets: [
@@ -850,12 +981,12 @@
 					},
 				],
 				caption: "",
-				variant: "enter-zoom",
+				variant: "enter-clip",
 			},
 			{
-				start: 271.9,
-				end: 303.1,
-				kicker: "Slide 08: Evidence",
+				start: 279.8,
+				end: 311.0,
+				kicker: "",
 				title: "Photo Evidence Specs",
 				keywords: ["Geotagged Metadata", "Angle Coverage", "Validation Match"],
 				bullets: [
@@ -873,12 +1004,12 @@
 					},
 				],
 				caption: "",
-				variant: "enter-blur",
+				variant: "enter-clip",
 			},
 			{
-				start: 303.1,
-				end: 335.2,
-				kicker: "Slide 09: Outcome",
+				start: 311.0,
+				end: 343.1,
+				kicker: "",
 				title: "Impact & Accountability",
 				keywords: ["Data Integrity", "Operational Speed", "Traceable Audit Trail"],
 				bullets: [
@@ -896,12 +1027,12 @@
 					},
 				],
 				caption: "",
-				variant: "enter-swipe",
+				variant: "enter-clip",
 			},
 		];
 
 		const fps = 30;
-		const totalFrames = 10056;
+		const totalFrames = 10293;
 		const beatFrames = 3 * fps;
 		let currentFrame = 0;
 		let isPlaying = false;
@@ -973,6 +1104,7 @@
 		const keywordRow = document.getElementById("keyword-row");
 		const bulletList = document.getElementById("bullet-list");
 		const captionEl = document.getElementById("caption-el");
+		const slideVisualsEl = document.getElementById("slide-visuals");
 
 		function resizeCanvas() {
 			const scaleX = container.clientWidth / 1920;
@@ -1009,6 +1141,7 @@
 			void sceneBody.offsetWidth;
 
 			kickerEl.innerText = scene.kicker;
+			kickerEl.style.display = scene.kicker ? "block" : "none";
 			titleEl.innerText = scene.title;
 
 			keywordRow.innerHTML = "";
@@ -1034,6 +1167,78 @@
 
 			captionEl.innerText = scene.caption;
 			captionEl.style.display = scene.caption ? "block" : "none";
+
+			// Render phone mockups for Slide 4 (index 3) or Slide 5 (index 4)
+			if (sceneIndex === 3) {
+				slideVisualsEl.innerHTML = `
+					<div class="visuals-container">
+						<div class="phone-mockup phone-1">
+							<img src="public/image/infra4.png" alt="Setup Screen 1" />
+						</div>
+						<div class="phone-mockup phone-2">
+							<img src="public/image/infra4.1.png" alt="Setup Screen 2" />
+						</div>
+					</div>
+				`;
+			} else if (sceneIndex === 4) {
+				slideVisualsEl.innerHTML = `
+					<div class="visuals-container">
+						<div class="phone-mockup phone-1">
+							<img src="public/image/infra5.png" alt="Procurement Screen 1" />
+						</div>
+						<div class="phone-mockup phone-2">
+							<img src="public/image/infra5.1.png" alt="Procurement Screen 2" />
+						</div>
+					</div>
+				`;
+			} else if (sceneIndex === 5) {
+				slideVisualsEl.innerHTML = `
+					<div class="visuals-container landscape-layout">
+						<div class="phone-mockup phone-1 browser-mockup">
+							<div class="browser-header">
+								<span class="dot red"></span>
+								<span class="dot yellow"></span>
+								<span class="dot green"></span>
+							</div>
+							<img src="public/image/infra6.png" alt="Gateway Screen 1" />
+						</div>
+						<div class="phone-mockup phone-2 browser-mockup">
+							<div class="browser-header">
+								<span class="dot red"></span>
+								<span class="dot yellow"></span>
+								<span class="dot green"></span>
+							</div>
+							<img src="public/image/infra6.1.png" alt="Gateway Screen 2" />
+						</div>
+					</div>
+				`;
+			} else if (sceneIndex === 6) {
+				slideVisualsEl.innerHTML = `
+					<div class="visuals-container">
+						<div class="phone-mockup phone-center">
+							<img src="public/image/infra7.png" alt="Construction Logs Screen" />
+						</div>
+					</div>
+				`;
+			} else if (sceneIndex === 7) {
+				slideVisualsEl.innerHTML = `
+					<div class="visuals-container">
+						<div class="phone-mockup phone-center">
+							<img src="public/image/infra8.png" alt="Objective Matrix Screen" />
+						</div>
+					</div>
+				`;
+			} else if (sceneIndex === 8) {
+				slideVisualsEl.innerHTML = `
+					<div class="visuals-container">
+						<div class="phone-mockup phone-center">
+							<img src="public/image/infra9.png" alt="Photo Evidence Screen" />
+						</div>
+					</div>
+				`;
+			} else {
+				slideVisualsEl.innerHTML = "";
+			}
 		}
 
 		function applyBeat(scene, sceneIndex, localFrame) {
@@ -1055,14 +1260,16 @@
 			renderScene(scene, sceneIndex);
 			applyBeat(scene, sceneIndex, localFrame);
 
-			// Slide smooth cross-fade transition
+			// Slide smooth cross-fade transition (only for Slide 1 to prevent white flash on subsequent slides)
 			const duration = (scene.end - scene.start) * fps;
 			let opacity = 1;
-			const fadeFrames = 15; // 0.5s fade duration
-			if (localFrame < fadeFrames) {
-				opacity = localFrame / fadeFrames;
-			} else if (localFrame > duration - fadeFrames) {
-				opacity = (duration - localFrame) / fadeFrames;
+			if (sceneIndex === 0) {
+				const fadeFrames = 15; // 0.5s fade duration
+				if (localFrame < fadeFrames) {
+					opacity = localFrame / fadeFrames;
+				} else if (localFrame > duration - fadeFrames) {
+					opacity = (duration - localFrame) / fadeFrames;
+				}
 			}
 			canvasFrame.style.opacity = opacity;
 

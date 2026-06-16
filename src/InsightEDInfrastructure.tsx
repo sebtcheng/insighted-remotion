@@ -54,7 +54,7 @@ const scenes: Scene[] = [
 	{
 		start: 35.3,
 		end: 68.0,
-		kicker: "Phase 1: Setup & Gate Rule",
+		kicker: "",
 		title: "Setup & Gate Rule",
 		keywords: ["PWA", "DepEd Email", "GPS & Camera", "Gate Rule"],
 		bullets: [
@@ -72,12 +72,12 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-swipe",
+		variant: "enter-clip",
 	},
 	{
 		start: 68.0,
 		end: 103.1,
-		kicker: "Phase 2: Construction Logs",
+		kicker: "",
 		title: "Progress & Outcomes",
 		keywords: ["Project Cards", "Objective Matrix", "Geotagged Proof"],
 		bullets: [
@@ -95,12 +95,12 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-zoom",
+		variant: "enter-clip",
 	},
 	{
 		start: 103.1,
 		end: 137.5,
-		kicker: "Slide 03: Phase 1",
+		kicker: "",
 		title: "Phase 1: Setup & Access",
 		keywords: ["PWA Setup", "DepEd Email", "Camera & GPS"],
 		bullets: [
@@ -118,12 +118,12 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-zoom",
+		variant: "enter-clip",
 	},
 	{
 		start: 137.5,
 		end: 176.2,
-		kicker: "Slide 04: Requirements",
+		kicker: "",
 		title: "Procurement Requirements",
 		keywords: ["ID & Timeline", "Execution Steps", "Entity & Cost"],
 		bullets: [
@@ -141,12 +141,12 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-blur",
+		variant: "enter-clip",
 	},
 	{
 		start: 176.2,
 		end: 208.9,
-		kicker: "Slide 05: Gateway",
+		kicker: "",
 		title: "Setup & Gate Rule",
 		keywords: ["Gate Rule", "Chronological Checks", "Duplicate Checks"],
 		bullets: [
@@ -164,12 +164,12 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-swipe",
+		variant: "enter-clip",
 	},
 	{
 		start: 208.9,
 		end: 236.9,
-		kicker: "Slide 06: Phase 2",
+		kicker: "",
 		title: "Phase 2: Construction Logs",
 		keywords: ["Project Cards", "Update Percentage", "Status & Remarks"],
 		bullets: [
@@ -187,12 +187,12 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-rise",
+		variant: "enter-clip",
 			},
 	{
 		start: 236.9,
-		end: 271.9,
-		kicker: "Slide 07: Matrix",
+		end: 279.8,
+		kicker: "",
 		title: "Objective Matrix Tally",
 		keywords: ["Checklist", "Milestone Weights", "Live Estimator"],
 		bullets: [
@@ -210,12 +210,12 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-zoom",
+		variant: "enter-clip",
 	},
 	{
-		start: 271.9,
-		end: 303.1,
-		kicker: "Slide 08: Evidence",
+		start: 279.8,
+		end: 311.0,
+		kicker: "",
 		title: "Photo Evidence Specs",
 		keywords: ["Geotagged Metadata", "Angle Coverage", "Validation Match"],
 		bullets: [
@@ -233,12 +233,12 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-blur",
+		variant: "enter-clip",
 	},
 	{
-		start: 303.1,
-		end: 335.2,
-		kicker: "Slide 09: Outcome",
+		start: 311.0,
+		end: 343.1,
+		kicker: "",
 		title: "Impact & Accountability",
 		keywords: ["Data Integrity", "Operational Speed", "Traceable Audit Trail"],
 		bullets: [
@@ -256,20 +256,20 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-swipe",
+		variant: "enter-clip",
 	},
 ];
 
-const SceneLayer: React.FC<{scene: Scene}> = ({scene}) => {
+const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => {
 	const frame = useCurrentFrame();
 	const fps = useVideoConfig().fps;
 	const duration = (scene.end - scene.start) * fps;
-	const opacity = interpolate(
+	const opacity = index === 0 ? interpolate(
 		frame,
 		[0, 15, duration - 15, duration],
 		[0, 1, 1, 0],
 		{extrapolateLeft: "clamp", extrapolateRight: "clamp"}
-	);
+	) : 1;
 
 	const isSettled = frame > 30;
 
@@ -283,9 +283,8 @@ const SceneLayer: React.FC<{scene: Scene}> = ({scene}) => {
 				<div className="brandLine" style={{display: "flex", alignItems: "center"}}>
 					<Img src={staticFile("InsightED_logo.png")} alt="InsightED Logo" style={{height: "220px", width: "auto", objectFit: "contain", filter: "drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff)"}} />
 				</div>
-
 				<div className={`sceneBody ${scene.variant} ${isSettled ? "settled" : ""}`}>
-					<div className="kicker">{scene.kicker}</div>
+					{scene.kicker && <div className="kicker">{scene.kicker}</div>}
 					<h1 className="title">{scene.title}</h1>
 					<div className="keywordRow">
 						{scene.keywords.map((keyword, index) => (
@@ -307,6 +306,68 @@ const SceneLayer: React.FC<{scene: Scene}> = ({scene}) => {
 					{scene.caption && <div className="caption">{scene.caption}</div>}
 				</div>
 			</div>
+
+			{index === 3 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-1">
+						<Img src={staticFile("image/infra4.png")} alt="Setup Screen 1" />
+					</div>
+					<div className="phone-mockup phone-2">
+						<Img src={staticFile("image/infra4.1.png")} alt="Setup Screen 2" />
+					</div>
+				</div>
+			)}
+			{index === 4 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-1">
+						<Img src={staticFile("image/infra5.png")} alt="Procurement Screen 1" />
+					</div>
+					<div className="phone-mockup phone-2">
+						<Img src={staticFile("image/infra5.1.png")} alt="Procurement Screen 2" />
+					</div>
+				</div>
+			)}
+			{index === 5 && (
+				<div className="visuals-container landscape-layout">
+					<div className="phone-mockup phone-1 browser-mockup">
+						<div className="browser-header">
+							<span className="dot red"></span>
+							<span className="dot yellow"></span>
+							<span className="dot green"></span>
+						</div>
+						<Img src={staticFile("image/infra6.png")} alt="Gateway Screen 1" />
+					</div>
+					<div className="phone-mockup phone-2 browser-mockup">
+						<div className="browser-header">
+							<span className="dot red"></span>
+							<span className="dot yellow"></span>
+							<span className="dot green"></span>
+						</div>
+						<Img src={staticFile("image/infra6.1.png")} alt="Gateway Screen 2" />
+					</div>
+				</div>
+			)}
+			{index === 6 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center">
+						<Img src={staticFile("image/infra7.png")} alt="Construction Logs Screen" />
+					</div>
+				</div>
+			)}
+			{index === 7 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center">
+						<Img src={staticFile("image/infra8.png")} alt="Objective Matrix Screen" />
+					</div>
+				</div>
+			)}
+			{index === 8 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center">
+						<Img src={staticFile("image/infra9.png")} alt="Photo Evidence Screen" />
+					</div>
+				</div>
+			)}
 		</AbsoluteFill>
 	);
 };
@@ -328,7 +389,7 @@ export const InsightEDInfrastructure: React.FC = () => {
 							<Audio src={staticFile(`audio_tracks/infra/infra${index + 1}.mp3`)} volume={0.95} />
 						</Sequence>
 					)}
-					<SceneLayer scene={scene} />
+					<SceneLayer scene={scene} index={index} />
 				</Sequence>
 			))}
 		</AbsoluteFill>

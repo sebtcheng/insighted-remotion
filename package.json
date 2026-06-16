@@ -26,9 +26,9 @@
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
-    "render-siif": "remotion render SIIFUserGuide public/SIIFUserGuide.mp4 --timeout 120000",
-    "render-intro": "remotion render InsightEDIntroduction public/InsightEDIntroduction.mp4 --timeout 120000",
-    "render-infra": "remotion render InsightEDInfrastructure public/InsightEDInfrastructure.mp4 --timeout 120000",
+    "render-siif": "remotion render SIIFUserGuide public/SIIFUserGuide.mp4 --timeout 600000",
+    "render-intro": "remotion render InsightEDIntroduction public/InsightEDIntroduction.mp4 --timeout 600000",
+    "render-infra": "remotion render InsightEDInfrastructure public/InsightEDInfrastructure.mp4 --timeout 600000",
     "watch-render": "node watch-render.js",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc"
