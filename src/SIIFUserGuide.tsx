@@ -10,6 +10,7 @@ import {
 	useVideoConfig,
 } from "remotion";
 import "./insighted-promo.css";
+import { getAnimatedStyle } from "./animations";
 
 type Bullet = {
 	title: string;
@@ -356,18 +357,30 @@ const SceneLayer: React.FC<{scene: Scene}> = ({scene}) => {
 				</div>
 
 				<div className={`sceneBody ${scene.variant} ${isSettled ? "settled" : ""}`}>
-					<div className="kicker">{scene.kicker}</div>
-					<h1 className="title">{scene.title}</h1>
+					<div className="kicker" style={getAnimatedStyle(frame, fps, 0, scene.variant)}>
+						{scene.kicker}
+					</div>
+					<h1 className="title" style={getAnimatedStyle(frame, fps, 0, scene.variant)}>
+						{scene.title}
+					</h1>
 					<div className="keywordRow">
-						{scene.keywords.map((keyword, index) => (
-							<span className="keyword" key={index}>
+						{scene.keywords.map((keyword, kIdx) => (
+							<span
+								className="keyword"
+								key={kIdx}
+								style={getAnimatedStyle(frame, fps, 0.08 + kIdx * 0.06, scene.variant)}
+							>
 								{keyword}
 							</span>
 						))}
 					</div>
 					<ul className="bulletList">
-						{scene.bullets.map((bullet, index) => (
-							<li className="bullet" key={index}>
+						{scene.bullets.map((bullet, bIdx) => (
+							<li
+								className="bullet"
+								key={bIdx}
+								style={getAnimatedStyle(frame, fps, 0.08 + bIdx * 0.06, scene.variant)}
+							>
 								<div className="bulletText">
 									<span className="bulletTitle">{bullet.title}</span>
 									<span className="bulletDescription">{bullet.description}</span>
@@ -375,7 +388,11 @@ const SceneLayer: React.FC<{scene: Scene}> = ({scene}) => {
 							</li>
 						))}
 					</ul>
-					{scene.caption && <div className="caption">{scene.caption}</div>}
+					{scene.caption && (
+						<div className="caption" style={getAnimatedStyle(frame, fps, 0.32, scene.variant)}>
+							{scene.caption}
+						</div>
+					)}
 				</div>
 			</div>
 		</AbsoluteFill>

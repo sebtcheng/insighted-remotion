@@ -2,7 +2,6 @@ import React from "react";
 import {
 	AbsoluteFill,
 	Audio,
-	Easing,
 	Img,
 	interpolate,
 	Sequence,
@@ -11,6 +10,7 @@ import {
 	useVideoConfig,
 } from "remotion";
 import "./insighted-promo.css";
+import { getAnimatedStyle, getPhoneAnimatedStyle } from "./animations";
 
 type Bullet = {
 	title: string;
@@ -50,7 +50,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-rise",
+		variant: "enter-fade",
 	},
 	{
 		start: 35.3,
@@ -73,7 +73,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-clip",
+		variant: "enter-swipe",
 	},
 	{
 		start: 68.0,
@@ -96,7 +96,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-clip",
+		variant: "enter-swipe",
 	},
 	{
 		start: 103.1,
@@ -119,7 +119,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-clip",
+		variant: "enter-swipe",
 	},
 	{
 		start: 137.5,
@@ -142,7 +142,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-clip",
+		variant: "enter-swipe",
 	},
 	{
 		start: 176.2,
@@ -165,7 +165,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-clip",
+		variant: "enter-swipe",
 	},
 	{
 		start: 208.9,
@@ -188,8 +188,8 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-clip",
-			},
+		variant: "enter-swipe",
+	},
 	{
 		start: 236.9,
 		end: 279.8,
@@ -211,7 +211,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-clip",
+		variant: "enter-swipe",
 	},
 	{
 		start: 279.8,
@@ -234,7 +234,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-clip",
+		variant: "enter-swipe",
 	},
 	{
 		start: 311.0,
@@ -257,40 +257,18 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-clip",
+		variant: "enter-swipe",
 	},
 ];
+
 const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => {
 	const frame = useCurrentFrame();
+	const { fps } = useVideoConfig();
 	
-	const opacity = index === 0
-		? 1
-		: interpolate(
-			frame,
-			[0, 15],
-			[0, 1],
-			{extrapolateLeft: "clamp", extrapolateRight: "clamp"}
-		);
-
-	const clipPercent = index === 0
-		? 0
-		: interpolate(
-			frame,
-			[0, 15],
-			[100, 0],
-			{
-				easing: Easing.bezier(0.16, 1, 0.3, 1),
-				extrapolateLeft: "clamp",
-				extrapolateRight: "clamp"
-			}
-		);
-
-	const clipPath = `inset(0 ${clipPercent}% 0 0)`;
-
 	const isSettled = frame > 30;
 
 	return (
-		<AbsoluteFill className="scene" style={{opacity, clipPath}}>
+		<AbsoluteFill className="scene">
 			{index === 0 && frame < 15 && (
 				<AbsoluteFill
 					style={{
@@ -312,18 +290,32 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 					<Img src={staticFile("InsightED_logo.png")} alt="InsightED Logo" style={{height: "220px", width: "auto", objectFit: "contain", filter: "drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff)"}} />
 				</div>
 				<div className={`sceneBody ${scene.variant} ${isSettled ? "settled" : ""}`}>
-					{scene.kicker && <div className="kicker">{scene.kicker}</div>}
-					<h1 className="title">{scene.title}</h1>
+					{scene.kicker && (
+						<div className="kicker" style={getAnimatedStyle(frame, fps, 0, scene.variant)}>
+							{scene.kicker}
+						</div>
+					)}
+					<h1 className="title" style={getAnimatedStyle(frame, fps, 0, scene.variant)}>
+						{scene.title}
+					</h1>
 					<div className="keywordRow">
-						{scene.keywords.map((keyword, index) => (
-							<span className="keyword" key={index}>
+						{scene.keywords.map((keyword, kIdx) => (
+							<span
+								className="keyword"
+								key={kIdx}
+								style={getAnimatedStyle(frame, fps, 0.08 + kIdx * 0.06, scene.variant)}
+							>
 								{keyword}
 							</span>
 						))}
 					</div>
 					<ul className="bulletList">
-						{scene.bullets.map((bullet, index) => (
-							<li className="bullet" key={index}>
+						{scene.bullets.map((bullet, bIdx) => (
+							<li
+								className="bullet"
+								key={bIdx}
+								style={getAnimatedStyle(frame, fps, 0.08 + bIdx * 0.06, scene.variant)}
+							>
 								<div className="bulletText">
 									<span className="bulletTitle">{bullet.title}</span>
 									<span className="bulletDescription">{bullet.description}</span>
@@ -331,33 +323,37 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 							</li>
 						))}
 					</ul>
-					{scene.caption && <div className="caption">{scene.caption}</div>}
+					{scene.caption && (
+						<div className="caption" style={getAnimatedStyle(frame, fps, 0.32, scene.variant)}>
+							{scene.caption}
+						</div>
+					)}
 				</div>
 			</div>
 
 			{index === 3 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-1">
+					<div className="phone-mockup phone-1" style={getPhoneAnimatedStyle(frame, fps, 0.12, false)}>
 						<Img src={staticFile("image/infra4.png")} alt="Setup Screen 1" />
 					</div>
-					<div className="phone-mockup phone-2">
+					<div className="phone-mockup phone-2" style={getPhoneAnimatedStyle(frame, fps, 0.28, false)}>
 						<Img src={staticFile("image/infra4.1.png")} alt="Setup Screen 2" />
 					</div>
 				</div>
 			)}
 			{index === 4 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-1">
+					<div className="phone-mockup phone-1" style={getPhoneAnimatedStyle(frame, fps, 0.12, false)}>
 						<Img src={staticFile("image/infra5.png")} alt="Procurement Screen 1" />
 					</div>
-					<div className="phone-mockup phone-2">
+					<div className="phone-mockup phone-2" style={getPhoneAnimatedStyle(frame, fps, 0.28, false)}>
 						<Img src={staticFile("image/infra5.1.png")} alt="Procurement Screen 2" />
 					</div>
 				</div>
 			)}
 			{index === 5 && (
 				<div className="visuals-container landscape-layout">
-					<div className="phone-mockup phone-1 browser-mockup">
+					<div className="phone-mockup phone-1 browser-mockup" style={getPhoneAnimatedStyle(frame, fps, 0.12, false)}>
 						<div className="browser-header">
 							<span className="dot red"></span>
 							<span className="dot yellow"></span>
@@ -365,7 +361,7 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 						</div>
 						<Img src={staticFile("image/infra6.png")} alt="Gateway Screen 1" />
 					</div>
-					<div className="phone-mockup phone-2 browser-mockup">
+					<div className="phone-mockup phone-2 browser-mockup" style={getPhoneAnimatedStyle(frame, fps, 0.28, false)}>
 						<div className="browser-header">
 							<span className="dot red"></span>
 							<span className="dot yellow"></span>
@@ -377,21 +373,21 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 			)}
 			{index === 6 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-center">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
 						<Img src={staticFile("image/infra7.png")} alt="Construction Logs Screen" />
 					</div>
 				</div>
 			)}
 			{index === 7 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-center">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
 						<Img src={staticFile("image/infra8.png")} alt="Objective Matrix Screen" />
 					</div>
 				</div>
 			)}
 			{index === 8 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-center">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
 						<Img src={staticFile("image/infra9.png")} alt="Photo Evidence Screen" />
 					</div>
 				</div>
