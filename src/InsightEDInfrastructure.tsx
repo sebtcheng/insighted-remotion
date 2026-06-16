@@ -262,7 +262,6 @@ const scenes: Scene[] = [
 ];
 const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => {
 	const frame = useCurrentFrame();
-	const fps = useVideoConfig().fps;
 	
 	const opacity = index === 0
 		? 1
