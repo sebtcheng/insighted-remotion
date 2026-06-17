@@ -116,8 +116,11 @@ export const getPhoneAnimatedStyle = (
 		extrapolateRight: "clamp",
 		easing,
 	});
-	const floatOffset = floatProgress * Math.sin((frame - startFrame) / 18) * 12;
-	const floatRotate = floatProgress * Math.cos((frame - startFrame) / 26) * 0.6;
+	const floatOffset = floatProgress * Math.sin((frame - startFrame) / 18) * (isCenter ? 24 : 12);
+	const floatRotate = 0;
+
+	// Subtle breathing scale that peaks at 1.02 only for center (single-image) phones
+	const breathScale = isCenter ? (1 + floatProgress * Math.max(0, -Math.sin((frame - startFrame) / 18)) * 0.02) : 1;
 
 	if (isCenter) {
 		const translateYPercent = interpolate(frame, [startFrame, endFrame], [10, -50], {
@@ -138,7 +141,7 @@ export const getPhoneAnimatedStyle = (
 
 		return {
 			opacity,
-			transform: `translate(-50%, calc(${translateYPercent}% + ${floatOffset}px)) rotate(${rotate + floatRotate}deg) scale(${scale})`,
+			transform: `translate(-50%, calc(${translateYPercent}% + ${floatOffset}px)) rotate(${rotate + floatRotate}deg) scale(${scale * breathScale})`,
 			animation: "none",
 		};
 	} else {
@@ -160,7 +163,7 @@ export const getPhoneAnimatedStyle = (
 
 		return {
 			opacity,
-			transform: `translateY(${translateY + floatOffset}px) rotate(${rotate + floatRotate}deg) scale(${scale})`,
+			transform: `translateY(${translateY + floatOffset}px) rotate(${rotate + floatRotate}deg) scale(${scale * breathScale})`,
 			animation: "none",
 		};
 	}
