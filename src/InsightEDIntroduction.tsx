@@ -108,7 +108,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-clip",
+		variant: "enter-swipe",
 	},
 	{
 		start: 37.74,
@@ -131,7 +131,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-zoom",
+		variant: "enter-swipe",
 	},
 	{
 		start: 47.46,
@@ -158,7 +158,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-blur",
+		variant: "enter-swipe",
 	},
 	{
 		start: 57.79,
@@ -212,7 +212,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-rise",
+		variant: "enter-swipe",
 	},
 	{
 		start: 78.38,
@@ -239,13 +239,13 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-clip",
+		variant: "enter-swipe",
 	},
 	{
 		start: 91.27,
 		end: 100.05,
 		kicker: "More than forms",
-		title: "Usable data sooner",
+		title: "Actionable records",
 		keywords: ["Clearer context", "Stronger accountability", "Faster decisions"],
 		bullets: [
 			{
@@ -262,7 +262,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-zoom",
+		variant: "enter-swipe",
 	},
 	{
 		start: 100.05,
@@ -289,7 +289,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-blur",
+		variant: "enter-swipe",
 	},
 	{
 		start: 112.33,
@@ -339,7 +339,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-rise",
+		variant: "enter-swipe",
 	},
 ];
 
@@ -369,7 +369,7 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 
 			<div className="textStage">
 				<div className="brandLine" style={{display: "flex", alignItems: "center"}}>
-					<Img src={staticFile("InsightED_logo.png")} alt="InsightED Logo" style={{height: "220px", width: "auto", objectFit: "contain", filter: "drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff)"}} />
+					<Img src={staticFile("InsightED_logo.png")} alt="InsightED Logo" style={{height: index === 0 ? "220px" : "130px", width: "auto", objectFit: "contain", filter: "drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff)"}} />
 				</div>
 
 				<div className={`sceneBody ${scene.variant} ${isSettled ? "settled" : ""}`}>
