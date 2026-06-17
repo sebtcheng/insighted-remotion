@@ -961,6 +961,50 @@
 	z-index: 11;
 	animation-delay: 0.28s;
 }
+.phone-3 {
+	right: -270px;
+	top: 280px;
+	z-index: 12;
+	animation-delay: 0.44s;
+}
+/* 3-phone cascade: larger, slight overlap, diagonally staggered */
+.visuals-container.triple-phones {
+	right: 30px;
+	top: 100px;
+	width: 840px;
+	height: 860px;
+}
+.visuals-container.triple-phones .phone-mockup {
+	width: 320px;
+	height: 569px;
+	border-radius: 32px;
+	border-width: 8px;
+	box-shadow: 0 20px 48px rgba(0,0,0,0.6);
+}
+/* Left phone - top left */
+.visuals-container.triple-phones .phone-1 {
+	left: 0px;
+	top: 20px;
+	transform: rotate(0deg);
+	z-index: 10;
+	animation-delay: 0.08s;
+}
+/* Center phone - middle, shifted right and down with slight overlap */
+.visuals-container.triple-phones .phone-2 {
+	left: 260px;
+	top: 140px;
+	transform: rotate(0deg);
+	z-index: 11;
+	animation-delay: 0.22s;
+}
+/* Right phone - bottom right, shifted further right and down with slight overlap */
+.visuals-container.triple-phones .phone-3 {
+	left: 520px;
+	top: 260px;
+	transform: rotate(0deg);
+	z-index: 12;
+	animation-delay: 0.36s;
+}
 @keyframes phoneRise {
 	from {
 		opacity: 0;

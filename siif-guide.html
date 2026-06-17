@@ -210,7 +210,7 @@
 			display: grid;
 			align-content: start;
 			margin-top: 36px;
-			max-width: 1030px;
+			max-width: 900px;
 		}
 
 		.kicker {
@@ -229,7 +229,7 @@
 			line-height: 0.98;
 			font-weight: 900;
 			letter-spacing: -0.055em;
-			max-width: 930px;
+			max-width: 900px;
 			margin: 0;
 			color: #f8fafc;
 			text-shadow: 0 12px 32px rgba(15, 23, 42, 0.24);
@@ -248,7 +248,7 @@
 			flex-wrap: wrap;
 			gap: 14px;
 			margin-top: 38px;
-			max-width: 940px;
+			max-width: 900px;
 		}
 
 		.keyword {
@@ -268,7 +268,7 @@
 			display: grid;
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			gap: 16px;
-			max-width: 920px;
+			max-width: 900px;
 			margin: 40px 0 0;
 			padding: 0;
 			list-style: none;
@@ -619,6 +619,9 @@
 				</div>
 			</div>
 
+			<!-- Phone visuals injected here per scene -->
+			<div id="visuals-container" class="visuals-container" style="display:none;"></div>
+
 		</div>
 	</div>
 
@@ -695,7 +698,7 @@
 			{
 				start: 23,
 				end: 44,
-				kicker: "Slide 01: Access Portal",
+				kicker: "Access Portal",
 				title: "Login & Locate the Portal",
 				keywords: ["DepEd Email Credentials", "Nexus Portal Path", "Other Services"],
 				bullets: [
@@ -718,7 +721,7 @@
 			{
 				start: 44,
 				end: 67,
-				kicker: "Slide 02: Planning Hub",
+				kicker: "Planning Hub",
 				title: "Initialize & Unlock Forms",
 				keywords: ["Modify Hub Drafts", "Deadline Countdown", "Sequential Locking"],
 				bullets: [
@@ -741,7 +744,7 @@
 			{
 				start: 67,
 				end: 97,
-				kicker: "Slide 03: Steps 1–3",
+				kicker: "Steps 1–3",
 				title: "Define Scope & Beneficiaries",
 				keywords: ["Step 1: Interventions", "Step 2: Learner Counts", "Step 3: Activities"],
 				bullets: [
@@ -764,7 +767,7 @@
 			{
 				start: 97,
 				end: 118,
-				kicker: "Slide 04: Step 4 Cost",
+				kicker: "Step 4 Cost",
 				title: "Budget Estimation Guards",
 				keywords: ["Estimate Cost Row", "Allocation Target", "Freeze Warnings"],
 				bullets: [
@@ -787,7 +790,7 @@
 			{
 				start: 118,
 				end: 139,
-				kicker: "Slide 05: Proposal",
+				kicker: "Proposal",
 				title: "Review Summary & Submit",
 				keywords: ["View Summary Button", "Full Audit Check", "Final Lock Status"],
 				bullets: [
@@ -810,7 +813,7 @@
 			{
 				start: 139,
 				end: 158,
-				kicker: "Slide 06: Utilization",
+				kicker: "Utilization",
 				title: "Log Quarterly Expenditures",
 				keywords: ["Reporting Months", "Budget Caps", "Spent Balance Logs"],
 				bullets: [
@@ -834,7 +837,7 @@
 			{
 				start: 158,
 				end: 177,
-				kicker: "InsightED Web Portal",
+				kicker: "InsightED Mobile App",
 				title: "SIIF RO/SDO Monitoring",
 				keywords: ["Complete Guide", "Jurisdiction Track", "Rosters & Compliance"],
 				bullets: [
@@ -857,7 +860,7 @@
 			{
 				start: 177,
 				end: 200,
-				kicker: "Slide 07: System Access",
+				kicker: "System Access",
 				title: "Portal Access & Codes",
 				keywords: ["Create Account", "Fill Required Fields", "Authorization Codes"],
 				bullets: [
@@ -880,7 +883,7 @@
 			{
 				start: 200,
 				end: 219,
-				kicker: "Slide 08: Nexus Home",
+				kicker: "Nexus Home",
 				title: "The Home Tab Overview",
 				keywords: ["Recipients Tally", "Submitted Plan Count", "Budget Appropriations"],
 				bullets: [
@@ -903,7 +906,7 @@
 			{
 				start: 219,
 				end: 237,
-				kicker: "Slide 09: Divisions",
+				kicker: "Divisions",
 				title: "Regional Office Filtering",
 				keywords: ["Granular Monitoring", "Division Search", "Dynamic Drill Down"],
 				bullets: [
@@ -926,7 +929,7 @@
 			{
 				start: 237,
 				end: 271,
-				kicker: "Slide 10: Schools Roster",
+				kicker: "Schools Roster",
 				title: "Schools Tab & Filter Roster",
 				keywords: ["Roster View Modes", "Status Quick Filters", "Funnel Parameter Tools"],
 				bullets: [
@@ -949,7 +952,7 @@
 			{
 				start: 271,
 				end: 293,
-				kicker: "Slide 11: School Detail",
+				kicker: "School Detail",
 				title: "Plan Evaluation & Export",
 				keywords: ["Progress Bar", "Interventions Navigation", "Download PDF Report"],
 				bullets: [
@@ -1062,6 +1065,23 @@
 			return scenes.find(scene => seconds >= scene.start && seconds < scene.end) || scenes[scenes.length - 1];
 		}
 
+		const BASE = "./public/image/";
+
+		// Map of sceneIndex -> image(s): single string = center phone, array of 2 = dual phones, array of 3 = triple phones
+		const sceneImages = {
+			1: "siif2.png",
+			2: "siif3.png",
+			3: ["siif4.png", "siif4.1.png", "siif4.2.png"],
+			4: "siif5.png",
+			5: "siif6.png",
+			8: ["siif9.png", "siif9.1.png"],
+			9: "siif10.png",
+			10: "siif11.png",
+			11: ["siif12.png", "siif12.1.png"],
+		};
+
+		const visualsContainer = document.getElementById("visuals-container");
+
 		function renderScene(scene, sceneIndex) {
 			if (lastSceneIndex === sceneIndex) return;
 			lastSceneIndex = sceneIndex;
@@ -1069,7 +1089,13 @@
 			sceneBody.className = `sceneBody ${scene.variant}`;
 			void sceneBody.offsetWidth;
 
-			kickerEl.innerText = scene.kicker;
+			// Logo height: big only on intro slides (index 0 and 7)
+			const logoEl = document.querySelector(".brandLine img");
+			if (logoEl) {
+				logoEl.style.height = (sceneIndex === 0 || sceneIndex === 7) ? "220px" : "130px";
+			}
+
+			kickerEl.innerText = scene.kicker.replace(/^Slide \d+:\s*/i, "");
 			titleEl.innerText = scene.title;
 
 			keywordRow.innerHTML = "";
@@ -1095,6 +1121,33 @@
 
 			captionEl.innerText = scene.caption;
 			captionEl.style.display = scene.caption ? "block" : "none";
+
+			// Render phone mockup images
+			visualsContainer.innerHTML = "";
+			const imgs = sceneImages[sceneIndex];
+			if (imgs) {
+				const isTriple = Array.isArray(imgs) && imgs.length === 3;
+				visualsContainer.className = "visuals-container" + (isTriple ? " triple-phones" : "");
+				visualsContainer.style.display = "flex";
+				if (Array.isArray(imgs)) {
+					const phoneClasses = ["phone-1", "phone-2", "phone-3"];
+					imgs.forEach((img, i) => {
+						const phone = document.createElement("div");
+						phone.className = `phone-mockup ${phoneClasses[i]}`;
+						phone.innerHTML = `<img src="${BASE}${img}" alt="slide image ${i + 1}" />`;
+						visualsContainer.appendChild(phone);
+					});
+				} else {
+					// Single center phone
+					const phone = document.createElement("div");
+					phone.className = "phone-mockup phone-center";
+					phone.innerHTML = `<img src="${BASE}${imgs}" alt="slide image" />`;
+					visualsContainer.appendChild(phone);
+				}
+			} else {
+				visualsContainer.className = "visuals-container";
+				visualsContainer.style.display = "none";
+			}
 		}
 
 		function applyBeat(scene, sceneIndex, localFrame) {

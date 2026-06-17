@@ -10,7 +10,7 @@ import {
 	useVideoConfig,
 } from "remotion";
 import "./insighted-promo.css";
-import { getAnimatedStyle } from "./animations";
+import { getAnimatedStyle, getPhoneAnimatedStyle } from "./animations";
 
 type Bullet = {
 	title: string;
@@ -56,7 +56,7 @@ const scenes: Scene[] = [
 	{
 		start: 23,
 		end: 44,
-		kicker: "Slide 01: Access Portal",
+		kicker: "Access Portal",
 		title: "Login & Locate the Portal",
 		keywords: ["DepEd Email Credentials", "Nexus Portal Path", "Other Services"],
 		bullets: [
@@ -79,7 +79,7 @@ const scenes: Scene[] = [
 	{
 		start: 44,
 		end: 67,
-		kicker: "Slide 02: Planning Hub",
+		kicker: "Planning Hub",
 		title: "Initialize & Unlock Forms",
 		keywords: ["Modify Hub Drafts", "Deadline Countdown", "Sequential Locking"],
 		bullets: [
@@ -102,7 +102,7 @@ const scenes: Scene[] = [
 	{
 		start: 67,
 		end: 97,
-		kicker: "Slide 03: Steps 1–3",
+		kicker: "Steps 1–3",
 		title: "Define Scope & Beneficiaries",
 		keywords: ["Step 1: Interventions", "Step 2: Learner Counts", "Step 3: Activities"],
 		bullets: [
@@ -125,7 +125,7 @@ const scenes: Scene[] = [
 	{
 		start: 97,
 		end: 118,
-		kicker: "Slide 04: Step 4 Cost",
+		kicker: "Step 4 Cost",
 		title: "Budget Estimation Guards",
 		keywords: ["Estimate Cost Row", "Allocation Target", "Freeze Warnings"],
 		bullets: [
@@ -148,7 +148,7 @@ const scenes: Scene[] = [
 	{
 		start: 118,
 		end: 139,
-		kicker: "Slide 05: Proposal",
+		kicker: "Proposal",
 		title: "Review Summary & Submit",
 		keywords: ["View Summary Button", "Full Audit Check", "Final Lock Status"],
 		bullets: [
@@ -171,7 +171,7 @@ const scenes: Scene[] = [
 	{
 		start: 139,
 		end: 158,
-		kicker: "Slide 06: Utilization",
+		kicker: "Utilization",
 		title: "Log Quarterly Expenditures",
 		keywords: ["Reporting Months", "Budget Caps", "Spent Balance Logs"],
 		bullets: [
@@ -195,7 +195,7 @@ const scenes: Scene[] = [
 	{
 		start: 158,
 		end: 177,
-		kicker: "InsightED Web Portal",
+		kicker: "InsightED Mobile App",
 		title: "SIIF RO/SDO Monitoring",
 		keywords: ["Complete Guide", "Jurisdiction Track", "Rosters & Compliance"],
 		bullets: [
@@ -218,7 +218,7 @@ const scenes: Scene[] = [
 	{
 		start: 177,
 		end: 200,
-		kicker: "Slide 07: System Access",
+		kicker: "System Access",
 		title: "Portal Access & Codes",
 		keywords: ["Create Account", "Fill Required Fields", "Authorization Codes"],
 		bullets: [
@@ -241,7 +241,7 @@ const scenes: Scene[] = [
 	{
 		start: 200,
 		end: 219,
-		kicker: "Slide 08: Nexus Home",
+		kicker: "Nexus Home",
 		title: "The Home Tab Overview",
 		keywords: ["Recipients Tally", "Submitted Plan Count", "Budget Appropriations"],
 		bullets: [
@@ -264,7 +264,7 @@ const scenes: Scene[] = [
 	{
 		start: 219,
 		end: 237,
-		kicker: "Slide 09: Divisions",
+		kicker: "Divisions",
 		title: "Regional Office Filtering",
 		keywords: ["Granular Monitoring", "Division Search", "Dynamic Drill Down"],
 		bullets: [
@@ -287,7 +287,7 @@ const scenes: Scene[] = [
 	{
 		start: 237,
 		end: 271,
-		kicker: "Slide 10: Schools Roster",
+		kicker: "Schools Roster",
 		title: "Schools Tab & Filter Roster",
 		keywords: ["Roster View Modes", "Status Quick Filters", "Funnel Parameter Tools"],
 		bullets: [
@@ -306,11 +306,11 @@ const scenes: Scene[] = [
 		],
 		caption: "",
 		variant: "enter-blur",
-			},
+	},
 	{
 		start: 271,
 		end: 293,
-		kicker: "Slide 11: School Detail",
+		kicker: "School Detail",
 		title: "Plan Evaluation & Export",
 		keywords: ["Progress Bar", "Interventions Navigation", "Download PDF Report"],
 		bullets: [
@@ -332,7 +332,7 @@ const scenes: Scene[] = [
 	},
 ];
 
-const SceneLayer: React.FC<{scene: Scene}> = ({scene}) => {
+const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => {
 	const frame = useCurrentFrame();
 	const fps = useVideoConfig().fps;
 	const duration = (scene.end - scene.start) * fps;
@@ -344,6 +344,8 @@ const SceneLayer: React.FC<{scene: Scene}> = ({scene}) => {
 	);
 
 	const isSettled = frame > 30;
+	// Intro slides (index 0 and 7) get big logo; all others get reduced
+	const isIntroSlide = index === 0 || index === 7;
 
 	return (
 		<AbsoluteFill className="scene" style={{opacity}}>
@@ -353,12 +355,12 @@ const SceneLayer: React.FC<{scene: Scene}> = ({scene}) => {
 
 			<div className="textStage">
 				<div className="brandLine" style={{display: "flex", alignItems: "center"}}>
-					<Img src={staticFile("InsightED_logo.png")} alt="InsightED Logo" style={{height: "220px", width: "auto", objectFit: "contain", filter: "drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff)"}} />
+					<Img src={staticFile("InsightED_logo.png")} alt="InsightED Logo" style={{height: isIntroSlide ? "220px" : "130px", width: "auto", objectFit: "contain", filter: "drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff)"}} />
 				</div>
 
 				<div className={`sceneBody ${scene.variant} ${isSettled ? "settled" : ""}`}>
 					<div className="kicker" style={getAnimatedStyle(frame, fps, 0, scene.variant)}>
-						{scene.kicker}
+						{scene.kicker.replace(/^Slide \d+:\s*/i, "")}
 					</div>
 					<h1 className="title" style={getAnimatedStyle(frame, fps, 0, scene.variant)}>
 						{scene.title}
@@ -395,6 +397,104 @@ const SceneLayer: React.FC<{scene: Scene}> = ({scene}) => {
 					)}
 				</div>
 			</div>
+
+			{/* Slide 01 → siif2.png (index 1) */}
+			{index === 1 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+						<Img src={staticFile("image/siif2.png")} alt="SIIF Slide 01" />
+					</div>
+				</div>
+			)}
+
+			{/* Slide 02 → siif3.png (index 2) */}
+			{index === 2 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+						<Img src={staticFile("image/siif3.png")} alt="SIIF Slide 02" />
+					</div>
+				</div>
+			)}
+
+			{/* Slide 03 → siif4.png + siif4.1.png + siif4.2.png (index 3) - cascade layout */}
+			{index === 3 && (() => {
+				const p1Base = getPhoneAnimatedStyle(frame, fps, 0.08, false);
+				const p2Base = getPhoneAnimatedStyle(frame, fps, 0.22, false);
+				const p3Base = getPhoneAnimatedStyle(frame, fps, 0.36, false);
+				return (
+					<div className="visuals-container triple-phones">
+						<div className="phone-mockup phone-1" style={{...p1Base, transform: `${p1Base.transform} rotate(0deg)`}}>
+							<Img src={staticFile("image/siif4.png")} alt="SIIF Slide 03a" />
+						</div>
+						<div className="phone-mockup phone-2" style={{...p2Base, transform: `${p2Base.transform} rotate(0deg)`}}>
+							<Img src={staticFile("image/siif4.1.png")} alt="SIIF Slide 03b" />
+						</div>
+						<div className="phone-mockup phone-3" style={{...p3Base, transform: `${p3Base.transform} rotate(0deg)`}}>
+							<Img src={staticFile("image/siif4.2.png")} alt="SIIF Slide 03c" />
+						</div>
+					</div>
+				);
+			})()}
+
+			{/* Slide 04 → siif5.png (index 4) */}
+			{index === 4 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+						<Img src={staticFile("image/siif5.png")} alt="SIIF Slide 04" />
+					</div>
+				</div>
+			)}
+
+			{/* Slide 05 → siif6.png (index 5) */}
+			{index === 5 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+						<Img src={staticFile("image/siif6.png")} alt="SIIF Slide 05" />
+					</div>
+				</div>
+			)}
+
+			{/* Slide 07 → siif9.png + siif9.1.png (index 8) */}
+			{index === 8 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-1" style={getPhoneAnimatedStyle(frame, fps, 0.08, false)}>
+						<Img src={staticFile("image/siif9.png")} alt="SIIF Slide 07a" />
+					</div>
+					<div className="phone-mockup phone-2" style={getPhoneAnimatedStyle(frame, fps, 0.22, false)}>
+						<Img src={staticFile("image/siif9.1.png")} alt="SIIF Slide 07b" />
+					</div>
+				</div>
+			)}
+
+			{/* Slide 08 → siif10.png (index 9) */}
+			{index === 9 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+						<Img src={staticFile("image/siif10.png")} alt="SIIF Slide 08" />
+					</div>
+				</div>
+			)}
+
+			{/* Slide 09 → siif11.png (index 10) */}
+			{index === 10 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+						<Img src={staticFile("image/siif11.png")} alt="SIIF Slide 09" />
+					</div>
+				</div>
+			)}
+
+			{/* Slide 10 → siif12.png + siif12.1.png (index 11) */}
+			{index === 11 && (
+				<div className="visuals-container">
+					<div className="phone-mockup phone-1" style={getPhoneAnimatedStyle(frame, fps, 0.08, false)}>
+						<Img src={staticFile("image/siif12.png")} alt="SIIF Slide 10a" />
+					</div>
+					<div className="phone-mockup phone-2" style={getPhoneAnimatedStyle(frame, fps, 0.22, false)}>
+						<Img src={staticFile("image/siif12.1.png")} alt="SIIF Slide 10b" />
+					</div>
+				</div>
+			)}
 		</AbsoluteFill>
 	);
 };
@@ -416,7 +516,7 @@ export const SIIFUserGuide: React.FC = () => {
 							<Audio src={staticFile(`audio_tracks/siif/siifslide${index + 1}.mp3`)} volume={0.95} />
 						</Sequence>
 					)}
-					<SceneLayer scene={scene} />
+					<SceneLayer scene={scene} index={index} />
 				</Sequence>
 			))}
 		</AbsoluteFill>
