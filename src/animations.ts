@@ -110,36 +110,57 @@ export const getPhoneAnimatedStyle = (
 		easing,
 	});
 
+	// Subtle float/hover effect that kicks in after entrance starts
+	const floatProgress = interpolate(frame, [startFrame, startFrame + 45], [0, 1], {
+		extrapolateLeft: "clamp",
+		extrapolateRight: "clamp",
+		easing,
+	});
+	const floatOffset = floatProgress * Math.sin((frame - startFrame) / 18) * 12;
+	const floatRotate = floatProgress * Math.cos((frame - startFrame) / 26) * 0.6;
+
 	if (isCenter) {
-		const translateYPercent = interpolate(frame, [startFrame, endFrame], [-40, -50], {
+		const translateYPercent = interpolate(frame, [startFrame, endFrame], [10, -50], {
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
 		});
-		const rotate = interpolate(frame, [startFrame, endFrame], [1, 0], {
+		const rotate = interpolate(frame, [startFrame, endFrame], [4, 0], {
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
 		});
+		const scale = interpolate(frame, [startFrame, endFrame], [0.88, 1], {
+			extrapolateLeft: "clamp",
+			extrapolateRight: "clamp",
+			easing,
+		});
+
 		return {
 			opacity,
-			transform: `translate(-50%, ${translateYPercent}%) rotate(${rotate}deg)`,
+			transform: `translate(-50%, calc(${translateYPercent}% + ${floatOffset}px)) rotate(${rotate + floatRotate}deg) scale(${scale})`,
 			animation: "none",
 		};
 	} else {
-		const translateY = interpolate(frame, [startFrame, endFrame], [80, 0], {
+		const translateY = interpolate(frame, [startFrame, endFrame], [180, 0], {
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
 		});
-		const rotate = interpolate(frame, [startFrame, endFrame], [2, 0], {
+		const rotate = interpolate(frame, [startFrame, endFrame], [8, 0], {
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
 		});
+		const scale = interpolate(frame, [startFrame, endFrame], [0.85, 1], {
+			extrapolateLeft: "clamp",
+			extrapolateRight: "clamp",
+			easing,
+		});
+
 		return {
 			opacity,
-			transform: `translateY(${translateY}px) rotate(${rotate}deg)`,
+			transform: `translateY(${translateY + floatOffset}px) rotate(${rotate + floatRotate}deg) scale(${scale})`,
 			animation: "none",
 		};
 	}
