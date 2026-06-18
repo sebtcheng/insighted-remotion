@@ -74,7 +74,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-swipe",
+		variant: "enter-clip",
 	},
 	{
 		start: 44,
@@ -120,7 +120,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-zoom",
+		variant: "enter-clip",
 	},
 	{
 		start: 97,
@@ -143,7 +143,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-blur",
+		variant: "enter-clip",
 	},
 	{
 		start: 118,
@@ -166,7 +166,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-swipe",
+		variant: "enter-clip",
 	},
 	{
 		start: 139,
@@ -189,7 +189,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-rise",
+		variant: "enter-clip",
 	},
 	// Part 2: RO/SDO Monitoring Guide
 	{
@@ -213,7 +213,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-rise",
+		variant: "enter-clip",
 	},
 	{
 		start: 177,
@@ -236,7 +236,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-swipe",
+		variant: "enter-clip",
 	},
 	{
 		start: 200,
@@ -282,7 +282,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-zoom",
+		variant: "enter-clip",
 	},
 	{
 		start: 237,
@@ -305,7 +305,7 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-blur",
+		variant: "enter-clip",
 	},
 	{
 		start: 271,
@@ -328,27 +328,32 @@ const scenes: Scene[] = [
 			},
 		],
 		caption: "",
-		variant: "enter-swipe",
+		variant: "enter-clip",
 	},
 ];
 
 const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => {
 	const frame = useCurrentFrame();
 	const fps = useVideoConfig().fps;
-	const duration = (scene.end - scene.start) * fps;
-	const opacity = interpolate(
-		frame,
-		[0, 15, duration - 15, duration],
-		[0, 1, 1, 0],
-		{extrapolateLeft: "clamp", extrapolateRight: "clamp"}
-	);
 
 	const isSettled = frame > 30;
 	// Intro slides (index 0 and 7) get big logo; all others get reduced
 	const isIntroSlide = index === 0 || index === 7;
 
 	return (
-		<AbsoluteFill className="scene" style={{opacity}}>
+		<AbsoluteFill className="scene">
+			{index === 0 && frame < 15 && (
+				<AbsoluteFill
+					style={{
+						backgroundColor: "white",
+						zIndex: 100,
+						opacity: interpolate(frame, [0, 15], [1, 0], {
+							extrapolateLeft: "clamp",
+							extrapolateRight: "clamp",
+						}),
+					}}
+				/>
+			)}
 			<div className="grid" />
 			<div className="glow glowOne" />
 			<div className="glow glowTwo" />

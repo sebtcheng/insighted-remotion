@@ -199,7 +199,7 @@ const scenes: Scene[] = [
 		bullets: [
 			{
 				title: "Milestone Weights",
-				description: "Prep (5%), Foundations (15%), Framing (20%), Roofing (15%), Masonry (25%), Finishing (20%).",
+				description: "Weights are distributed across key project phases from initial preparation to final finishing.",
 			},
 			{
 				title: "Objective Calculations",

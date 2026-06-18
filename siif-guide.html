@@ -601,6 +601,7 @@
 
 	<div id="player-container">
 		<div id="canvas-frame" class="videoRoot scene">
+			<div id="white-overlay" style="position: absolute; inset: 0; background: white; z-index: 100; pointer-events: none; opacity: 0;"></div>
 			<div class="grid"></div>
 			<div class="glow glowOne"></div>
 			<div class="glow glowTwo"></div>
@@ -716,7 +717,7 @@
 					},
 				],
 				caption: "",
-				variant: "enter-swipe",
+				variant: "enter-clip",
 			},
 			{
 				start: 44,
@@ -762,7 +763,7 @@
 					},
 				],
 				caption: "",
-				variant: "enter-zoom",
+				variant: "enter-clip",
 			},
 			{
 				start: 97,
@@ -785,7 +786,7 @@
 					},
 				],
 				caption: "",
-				variant: "enter-blur",
+				variant: "enter-clip",
 			},
 			{
 				start: 118,
@@ -808,7 +809,7 @@
 					},
 				],
 				caption: "",
-				variant: "enter-swipe",
+				variant: "enter-clip",
 			},
 			{
 				start: 139,
@@ -831,7 +832,7 @@
 					},
 				],
 				caption: "",
-				variant: "enter-rise",
+				variant: "enter-clip",
 			},
 			// Part 2: RO/SDO Monitoring Guide
 			{
@@ -855,7 +856,7 @@
 					},
 				],
 				caption: "",
-				variant: "enter-rise",
+				variant: "enter-clip",
 			},
 			{
 				start: 177,
@@ -878,7 +879,7 @@
 					},
 				],
 				caption: "",
-				variant: "enter-swipe",
+				variant: "enter-clip",
 			},
 			{
 				start: 200,
@@ -924,7 +925,7 @@
 					},
 				],
 				caption: "",
-				variant: "enter-zoom",
+				variant: "enter-clip",
 			},
 			{
 				start: 237,
@@ -947,7 +948,7 @@
 					},
 				],
 				caption: "",
-				variant: "enter-blur",
+				variant: "enter-clip",
 			},
 			{
 				start: 271,
@@ -970,7 +971,7 @@
 					},
 				],
 				caption: "",
-				variant: "enter-swipe",
+				variant: "enter-clip",
 			},
 		];
 
@@ -1037,6 +1038,7 @@
 		const keywordRow = document.getElementById("keyword-row");
 		const bulletList = document.getElementById("bullet-list");
 		const captionEl = document.getElementById("caption-el");
+		const whiteOverlay = document.getElementById("white-overlay");
 
 		function resizeCanvas() {
 			const scaleX = container.clientWidth / 1920;
@@ -1170,16 +1172,29 @@
 			renderScene(scene, sceneIndex);
 			applyBeat(scene, sceneIndex, localFrame);
 
-			// Slide smooth cross-fade transition
-			const duration = (scene.end - scene.start) * fps;
+			// Slide smooth cross-fade transition and line swipe (fade-in only, no fade-out)
+			const fadeFrames = 15; // 0.5s transition duration
 			let opacity = 1;
-			const fadeFrames = 15; // 0.5s fade duration
-			if (localFrame < fadeFrames) {
-				opacity = localFrame / fadeFrames;
-			} else if (localFrame > duration - fadeFrames) {
-				opacity = (duration - localFrame) / fadeFrames;
+			let clipPath = "inset(0 0 0 0)";
+			let whiteOverlayOpacity = 0;
+
+			if (sceneIndex === 0) {
+				if (localFrame < fadeFrames) {
+					whiteOverlayOpacity = 1 - (localFrame / fadeFrames);
+				}
+			} else {
+				if (localFrame < fadeFrames) {
+					const progress = localFrame / fadeFrames;
+					// easeOutCubic: 1 - (1 - t)^3 for ultra-smooth easing
+					const easedProgress = 1 - Math.pow(1 - progress, 3);
+					opacity = progress;
+					const clipPercent = 100 - (easedProgress * 100);
+					clipPath = `inset(0 ${clipPercent}% 0 0)`;
+				}
 			}
 			canvasFrame.style.opacity = opacity;
+			canvasFrame.style.clipPath = clipPath;
+			whiteOverlay.style.opacity = whiteOverlayOpacity;
 
 			syncAudio(sceneIndex, localFrame);
 
