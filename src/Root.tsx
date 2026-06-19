@@ -10,7 +10,7 @@ export const RemotionRoot: React.FC = () => {
 			<Composition
 				id="InsightEDIntroduction"
 				component={InsightEDIntroduction}
-				durationInFrames={3991}
+				durationInFrames={4141}
 				fps={30}
 				width={1920}
 				height={1080}
@@ -18,7 +18,7 @@ export const RemotionRoot: React.FC = () => {
 			<Composition
 				id="SIIFUserGuide"
 				component={SIIFUserGuide}
-				durationInFrames={8790}
+				durationInFrames={8940}
 				fps={30}
 				width={1920}
 				height={1080}
@@ -26,7 +26,7 @@ export const RemotionRoot: React.FC = () => {
 			<Composition
 				id="InsightEDInfrastructure"
 				component={InsightEDInfrastructure}
-				durationInFrames={10293}
+				durationInFrames={10443}
 				fps={30}
 				width={1920}
 				height={1080}

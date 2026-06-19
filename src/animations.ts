@@ -35,28 +35,28 @@ export const getAnimatedStyle = (
 	let filter = "";
 
 	if (variant === "enter-rise") {
-		const translateY = interpolate(frame, [startFrame, endFrame], [38, 0], {
+		const translateY = interpolate(frame, [startFrame, endFrame], [19, 0], {
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
 		});
 		transform = `translateY(${translateY}px)`;
 	} else if (variant === "enter-swipe") {
-		const translateX = interpolate(frame, [startFrame, endFrame], [-52, 0], {
+		const translateX = interpolate(frame, [startFrame, endFrame], [-26, 0], {
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
 		});
 		transform = `translateX(${translateX}px)`;
 	} else if (variant === "enter-zoom") {
-		const scale = interpolate(frame, [startFrame, endFrame], [0.92, 1], {
+		const scale = interpolate(frame, [startFrame, endFrame], [0.96, 1], {
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
 		});
 		transform = `scale(${scale})`;
 	} else if (variant === "enter-clip") {
-		const translateX = interpolate(frame, [startFrame, endFrame], [-18, 0], {
+		const translateX = interpolate(frame, [startFrame, endFrame], [-9, 0], {
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
@@ -69,12 +69,12 @@ export const getAnimatedStyle = (
 		transform = `translateX(${translateX}px)`;
 		clipPath = `inset(0 ${clipWidth}% 0 0)`;
 	} else if (variant === "enter-blur") {
-		const translateY = interpolate(frame, [startFrame, endFrame], [18, 0], {
+		const translateY = interpolate(frame, [startFrame, endFrame], [9, 0], {
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
 		});
-		const blur = interpolate(frame, [startFrame, endFrame], [10, 0], {
+		const blur = interpolate(frame, [startFrame, endFrame], [5, 0], {
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
@@ -96,13 +96,14 @@ export const getPhoneAnimatedStyle = (
 	frame: number,
 	fps: number,
 	delaySec: number,
-	isCenter: boolean
+	isCenter: boolean,
+	absoluteFrame?: number
 ): React.CSSProperties => {
 	const delayFrames = Math.round(delaySec * fps);
-	const durationFrames = Math.round(0.62 * fps);
+	const durationFrames = Math.round(0.9 * fps); // Smoother/slower duration (0.9s instead of 0.62s)
 	const startFrame = delayFrames;
 	const endFrame = delayFrames + durationFrames;
-	const easing = Easing.bezier(0.16, 1, 0.3, 1);
+	const easing = Easing.bezier(0.25, 1, 0.5, 1); // Gentler, smoother easing
 
 	const opacity = interpolate(frame, [startFrame, endFrame], [0, 1], {
 		extrapolateLeft: "clamp",
@@ -110,30 +111,33 @@ export const getPhoneAnimatedStyle = (
 		easing,
 	});
 
-	// Subtle float/hover effect that kicks in after entrance starts
+	// Looping animation (float/hover) reduced by 50%
 	const floatProgress = interpolate(frame, [startFrame, startFrame + 45], [0, 1], {
 		extrapolateLeft: "clamp",
 		extrapolateRight: "clamp",
 		easing,
 	});
-	const floatOffset = floatProgress * Math.sin((frame - startFrame) / 18) * (isCenter ? 24 : 12);
+	
+	const floatFrame = absoluteFrame !== undefined ? absoluteFrame : frame;
+	const floatPeriod = isCenter ? 18.14 : 26.26; // Match CSS periods (3.8s and 5.5s)
+	const floatOffset = floatProgress * Math.sin(floatFrame / floatPeriod) * (isCenter ? 6 : 3);
 	const floatRotate = 0;
 
-	// Subtle breathing scale that peaks at 1.02 only for center (single-image) phones
-	const breathScale = isCenter ? (1 + floatProgress * Math.max(0, -Math.sin((frame - startFrame) / 18)) * 0.02) : 1;
+	// Looping breath scale reduced by 50% (0.005 instead of 0.01)
+	const breathScale = isCenter ? (1 + floatProgress * Math.max(0, -Math.sin(floatFrame / floatPeriod)) * 0.005) : 1;
 
 	if (isCenter) {
-		const translateYPercent = interpolate(frame, [startFrame, endFrame], [10, -50], {
+		const translateYPercent = interpolate(frame, [startFrame, endFrame], [-42.5, -50], { // Smaller entrance movement (starts from -42.5% instead of -20%)
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
 		});
-		const rotate = interpolate(frame, [startFrame, endFrame], [4, 0], {
+		const rotate = interpolate(frame, [startFrame, endFrame], [0.5, 0], { // Less rotation (0.5deg instead of 2deg)
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
 		});
-		const scale = interpolate(frame, [startFrame, endFrame], [0.88, 1], {
+		const scale = interpolate(frame, [startFrame, endFrame], [0.975, 1], { // Smaller scale shift (starts from 0.975 instead of 0.94)
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
@@ -145,17 +149,17 @@ export const getPhoneAnimatedStyle = (
 			animation: "none",
 		};
 	} else {
-		const translateY = interpolate(frame, [startFrame, endFrame], [180, 0], {
+		const translateY = interpolate(frame, [startFrame, endFrame], [30, 0], { // Smaller entrance offset (starts from 30px instead of 90px)
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
 		});
-		const rotate = interpolate(frame, [startFrame, endFrame], [8, 0], {
+		const rotate = interpolate(frame, [startFrame, endFrame], [1, 0], { // Less rotation (1deg instead of 4deg)
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,
 		});
-		const scale = interpolate(frame, [startFrame, endFrame], [0.85, 1], {
+		const scale = interpolate(frame, [startFrame, endFrame], [0.97, 1], { // Smaller scale shift (starts from 0.97 instead of 0.925)
 			extrapolateLeft: "clamp",
 			extrapolateRight: "clamp",
 			easing,

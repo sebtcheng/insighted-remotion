@@ -26,6 +26,7 @@ type Scene = {
 	bullets: Bullet[];
 	caption: string;
 	variant: string;
+	isOutro?: boolean;
 };
 
 const scenes: Scene[] = [
@@ -330,6 +331,17 @@ const scenes: Scene[] = [
 		caption: "",
 		variant: "enter-clip",
 	},
+	{
+		start: 293,
+		end: 298,
+		kicker: "",
+		title: "",
+		keywords: [],
+		bullets: [],
+		caption: "",
+		variant: "enter-zoom",
+		isOutro: true,
+	},
 ];
 
 const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => {
@@ -339,9 +351,44 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 	const isSettled = frame > 30;
 	// Intro slides (index 0 and 7) get big logo; all others get reduced
 	const isIntroSlide = index === 0 || index === 7;
+	const isOutro = scene.isOutro;
+
+	const fadeOutStartFrame = (scene.end - scene.start) * fps - 45;
+	const fadeOutProgress = interpolate(frame, [fadeOutStartFrame, (scene.end - scene.start) * fps], [0, 1], {
+		extrapolateLeft: "clamp",
+		extrapolateRight: "clamp",
+	});
+	const logoFilter = isOutro 
+		? "drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff) drop-shadow(0 0 12px rgba(255, 255, 255, 0.5)) drop-shadow(0 0 20px rgba(125, 211, 252, 0.25))"
+		: "drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff)";
+
+
+	// Slide transition logic matching HTML:
+	const fadeFrames = 15;
+	let opacity = 1;
+	let clipPath = "inset(0 0 0 0)";
+
+	if (index > 0 && !isOutro) {
+		if (frame < fadeFrames) {
+			const progressVal = frame / fadeFrames;
+			const easedProgress = 1 - Math.pow(1 - progressVal, 3);
+			opacity = progressVal;
+			const clipPercent = 100 - (easedProgress * 100);
+			clipPath = `inset(0 ${clipPercent}% 0 0)`;
+		}
+	} else if (isOutro) {
+		opacity = interpolate(frame, [0, fadeFrames], [0, 1], {
+			extrapolateLeft: "clamp",
+			extrapolateRight: "clamp",
+		});
+	}
+
+	const outroFadeOpacity = isOutro ? 1 - fadeOutProgress : 1;
+	const combinedOpacity = opacity * outroFadeOpacity;
+	const absoluteFrame = Math.round(scene.start * fps) + frame;
 
 	return (
-		<AbsoluteFill className="scene">
+		<AbsoluteFill style={{ opacity: combinedOpacity, clipPath, isolation: "isolate", zIndex: 2 }}>
 			{index === 0 && frame < 15 && (
 				<AbsoluteFill
 					style={{
@@ -354,59 +401,76 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 					}}
 				/>
 			)}
-			<div className="grid" />
-			<div className="glow glowOne" />
-			<div className="glow glowTwo" />
 
 			<div className="textStage">
-				<div className="brandLine" style={{display: "flex", alignItems: "center"}}>
-					<Img src={staticFile("InsightED_logo.png")} alt="InsightED Logo" style={{height: isIntroSlide ? "220px" : "130px", width: "auto", objectFit: "contain", filter: "drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff)"}} />
+				<div className="brandLine" style={isOutro ? {
+					position: "absolute",
+					left: "50%",
+					top: "50%",
+					transform: "translate(-50%, -50%)",
+					justifyContent: "center",
+					width: "auto",
+					margin: "0"
+				} : {display: "flex", alignItems: "center"}}>
+					<Img 
+						src={staticFile("InsightED_logo.png")} 
+						alt="InsightED Logo" 
+						className={isOutro ? "logo-glowing" : ""}
+						style={{
+							height: isOutro ? "700px" : isIntroSlide ? "220px" : "130px", 
+							width: "auto", 
+							objectFit: "contain", 
+							filter: logoFilter
+						}} 
+					/>
 				</div>
 
-				<div className={`sceneBody ${scene.variant} ${isSettled ? "settled" : ""}`}>
-					<div className="kicker" style={getAnimatedStyle(frame, fps, 0, scene.variant)}>
-						{scene.kicker.replace(/^Slide \d+:\s*/i, "")}
-					</div>
-					<h1 className="title" style={getAnimatedStyle(frame, fps, 0, scene.variant)}>
-						{scene.title}
-					</h1>
-					<div className="keywordRow">
-						{scene.keywords.map((keyword, kIdx) => (
-							<span
-								className="keyword"
-								key={kIdx}
-								style={getAnimatedStyle(frame, fps, 0.08 + kIdx * 0.06, scene.variant)}
-							>
-								{keyword}
-							</span>
-						))}
-					</div>
-					<ul className="bulletList">
-						{scene.bullets.map((bullet, bIdx) => (
-							<li
-								className="bullet"
-								key={bIdx}
-								style={getAnimatedStyle(frame, fps, 0.08 + bIdx * 0.06, scene.variant)}
-							>
-								<div className="bulletText">
-									<span className="bulletTitle">{bullet.title}</span>
-									<span className="bulletDescription">{bullet.description}</span>
-								</div>
-							</li>
-						))}
-					</ul>
-					{scene.caption && (
-						<div className="caption" style={getAnimatedStyle(frame, fps, 0.32, scene.variant)}>
-							{scene.caption}
+				{!isOutro && (
+					<div className={`sceneBody ${scene.variant} ${isSettled ? "settled" : ""}`}>
+						<div className="kicker" style={getAnimatedStyle(frame, fps, 0, scene.variant)}>
+							{scene.kicker.replace(/^Slide \d+:\s*/i, "")}
 						</div>
-					)}
-				</div>
+						<h1 className="title" style={getAnimatedStyle(frame, fps, 0, scene.variant)}>
+							{scene.title}
+						</h1>
+						<div className="keywordRow">
+							{scene.keywords.map((keyword, kIdx) => (
+								<span
+									className="keyword"
+									key={kIdx}
+									style={getAnimatedStyle(frame, fps, 0.08 + kIdx * 0.06, scene.variant)}
+								>
+									{keyword}
+								</span>
+							))}
+						</div>
+						<ul className="bulletList">
+							{scene.bullets.map((bullet, bIdx) => (
+								<li
+									className="bullet"
+									key={bIdx}
+									style={getAnimatedStyle(frame, fps, 0.08 + bIdx * 0.06, scene.variant)}
+								>
+									<div className="bulletText">
+										<span className="bulletTitle">{bullet.title}</span>
+										<span className="bulletDescription">{bullet.description}</span>
+									</div>
+								</li>
+							))}
+						</ul>
+						{scene.caption && (
+							<div className="caption" style={getAnimatedStyle(frame, fps, 0.32, scene.variant)}>
+								{scene.caption}
+							</div>
+						)}
+					</div>
+				)}
 			</div>
 
 			{/* Slide 01 → siif2.png (index 1) */}
 			{index === 1 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true, absoluteFrame)}>
 						<Img src={staticFile("image/siif2.png")} alt="SIIF Slide 01" />
 					</div>
 				</div>
@@ -415,7 +479,7 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 			{/* Slide 02 → siif3.png (index 2) */}
 			{index === 2 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true, absoluteFrame)}>
 						<Img src={staticFile("image/siif3.png")} alt="SIIF Slide 02" />
 					</div>
 				</div>
@@ -423,9 +487,9 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 
 			{/* Slide 03 → siif4.png + siif4.1.png + siif4.2.png (index 3) - cascade layout */}
 			{index === 3 && (() => {
-				const p1Base = getPhoneAnimatedStyle(frame, fps, 0.08, false);
-				const p2Base = getPhoneAnimatedStyle(frame, fps, 0.22, false);
-				const p3Base = getPhoneAnimatedStyle(frame, fps, 0.36, false);
+				const p1Base = getPhoneAnimatedStyle(frame, fps, 0.08, false, absoluteFrame);
+				const p2Base = getPhoneAnimatedStyle(frame, fps, 0.22, false, absoluteFrame);
+				const p3Base = getPhoneAnimatedStyle(frame, fps, 0.36, false, absoluteFrame);
 				return (
 					<div className="visuals-container triple-phones">
 						<div className="phone-mockup phone-1" style={{...p1Base, transform: `${p1Base.transform} rotate(0deg)`}}>
@@ -444,7 +508,7 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 			{/* Slide 04 → siif5.png (index 4) */}
 			{index === 4 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true, absoluteFrame)}>
 						<Img src={staticFile("image/siif5.png")} alt="SIIF Slide 04" />
 					</div>
 				</div>
@@ -453,7 +517,7 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 			{/* Slide 05 → siif6.png (index 5) */}
 			{index === 5 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true, absoluteFrame)}>
 						<Img src={staticFile("image/siif6.png")} alt="SIIF Slide 05" />
 					</div>
 				</div>
@@ -462,10 +526,10 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 			{/* Slide 07 → siif9.png + siif9.1.png (index 8) */}
 			{index === 8 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-1" style={getPhoneAnimatedStyle(frame, fps, 0.08, false)}>
+					<div className="phone-mockup phone-1" style={getPhoneAnimatedStyle(frame, fps, 0.08, false, absoluteFrame)}>
 						<Img src={staticFile("image/siif9.png")} alt="SIIF Slide 07a" />
 					</div>
-					<div className="phone-mockup phone-2" style={getPhoneAnimatedStyle(frame, fps, 0.22, false)}>
+					<div className="phone-mockup phone-2" style={getPhoneAnimatedStyle(frame, fps, 0.22, false, absoluteFrame)}>
 						<Img src={staticFile("image/siif9.1.png")} alt="SIIF Slide 07b" />
 					</div>
 				</div>
@@ -474,7 +538,7 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 			{/* Slide 08 → siif10.png (index 9) */}
 			{index === 9 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true, absoluteFrame)}>
 						<Img src={staticFile("image/siif10.png")} alt="SIIF Slide 08" />
 					</div>
 				</div>
@@ -483,7 +547,7 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 			{/* Slide 09 → siif11.png (index 10) */}
 			{index === 10 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true)}>
+					<div className="phone-mockup phone-center" style={getPhoneAnimatedStyle(frame, fps, 0, true, absoluteFrame)}>
 						<Img src={staticFile("image/siif11.png")} alt="SIIF Slide 09" />
 					</div>
 				</div>
@@ -492,10 +556,10 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 			{/* Slide 10 → siif12.png + siif12.1.png (index 11) */}
 			{index === 11 && (
 				<div className="visuals-container">
-					<div className="phone-mockup phone-1" style={getPhoneAnimatedStyle(frame, fps, 0.08, false)}>
+					<div className="phone-mockup phone-1" style={getPhoneAnimatedStyle(frame, fps, 0.08, false, absoluteFrame)}>
 						<Img src={staticFile("image/siif12.png")} alt="SIIF Slide 10a" />
 					</div>
-					<div className="phone-mockup phone-2" style={getPhoneAnimatedStyle(frame, fps, 0.22, false)}>
+					<div className="phone-mockup phone-2" style={getPhoneAnimatedStyle(frame, fps, 0.22, false, absoluteFrame)}>
 						<Img src={staticFile("image/siif12.1.png")} alt="SIIF Slide 10b" />
 					</div>
 				</div>
@@ -505,11 +569,25 @@ const SceneLayer: React.FC<{scene: Scene; index: number}> = ({scene, index}) => 
 };
 
 export const SIIFUserGuide: React.FC = () => {
-	const fps = useVideoConfig().fps;
+	const frame = useCurrentFrame();
+	const { fps, durationInFrames } = useVideoConfig();
+
+	const bgmVolume = interpolate(
+		frame,
+		[durationInFrames - 45, durationInFrames],
+		[0.15, 0],
+		{
+			extrapolateLeft: "clamp",
+			extrapolateRight: "clamp",
+		}
+	);
 
 	return (
-		<AbsoluteFill className="videoRoot">
-			<Audio src={staticFile("audio_tracks/InsightED_Video_BGM.mp3")} volume={0.15} loop />
+		<AbsoluteFill className="videoRoot scene">
+			<div className="grid" />
+			<div className="glow glowOne" />
+			<div className="glow glowTwo" />
+			<Audio src={staticFile("audio_tracks/InsightED_Video_BGM.mp3")} volume={bgmVolume} loop />
 			{scenes.map((scene, index) => (
 				<Sequence
 					key={`${scene.start}-${scene.title}`}
@@ -527,3 +605,4 @@ export const SIIFUserGuide: React.FC = () => {
 		</AbsoluteFill>
 	);
 };
+

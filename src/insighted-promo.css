@@ -105,7 +105,7 @@
 		linear-gradient(rgba(8, 49, 95, 0.09) 1px, transparent 1px),
 		linear-gradient(90deg, rgba(8, 49, 95, 0.09) 1px, transparent 1px);
 	background-size: 80px 80px;
-	animation: gridMove 12s linear infinite;
+	animation: gridMove 48s linear infinite;
 	z-index: 0;
 }
 
@@ -114,7 +114,7 @@
 		transform: translate(0, 0);
 	}
 	to {
-		transform: translate(80px, 80px);
+		transform: translate(40px, 40px);
 	}
 }
 
@@ -831,7 +831,7 @@
 @keyframes riseIn {
 	from {
 		opacity: 0;
-		transform: translateY(38px);
+		transform: translateY(19px);
 	}
 	to {
 		opacity: 1;
@@ -842,7 +842,7 @@
 @keyframes swipeIn {
 	from {
 		opacity: 0;
-		transform: translateX(-52px);
+		transform: translateX(-26px);
 	}
 	to {
 		opacity: 1;
@@ -853,7 +853,7 @@
 @keyframes zoomIn {
 	from {
 		opacity: 0;
-		transform: scale(0.92);
+		transform: scale(0.96);
 	}
 	to {
 		opacity: 1;
@@ -865,7 +865,7 @@
 	from {
 		opacity: 0;
 		clip-path: inset(0 100% 0 0);
-		transform: translateX(-18px);
+		transform: translateX(-9px);
 	}
 	to {
 		opacity: 1;
@@ -877,8 +877,8 @@
 @keyframes blurIn {
 	from {
 		opacity: 0;
-		filter: blur(10px);
-		transform: translateY(18px);
+		filter: blur(5px);
+		transform: translateY(9px);
 	}
 	to {
 		opacity: 1;
@@ -889,11 +889,11 @@
 
 .keyword.active,
 .bullet.active {
-	transform: translateY(-8px) scale(1.04);
+	transform: translateY(-4px) scale(1.02);
 	background: rgba(251, 191, 36, 0.22);
 	box-shadow:
-		inset 0 -4px 0 #fbbf24,
-		0 0 24px rgba(251, 191, 36, 0.34);
+		inset 0 -2px 0 #fbbf24,
+		0 0 12px rgba(251, 191, 36, 0.17);
 	transition: transform 0.28s ease, background 0.28s ease, box-shadow 0.28s ease;
 }
 
@@ -950,38 +950,42 @@
 }
 /* Static HTML Preview Animations (disables in Remotion via inline styles) */
 .phone-center {
-	left: 50%;
+	width: 420px !important;
+	height: 740px !important;
+	border-radius: 40px !important;
+	border-width: 9px !important;
+	left: 32% !important;
 	top: 50%;
 	transform: translate(-50%, -50%);
-	animation: floatAnimationCenter 3.8s ease-in-out infinite;
+	animation: phoneRiseCenter 0.9s cubic-bezier(0.25, 1, 0.5, 1) both, floatAnimationCenter 3.8s ease-in-out infinite 0.9s;
 }
 .phone-1 {
 	left: -70px;
 	top: 20px;
 	z-index: 10;
-	animation: phoneRise 0.62s cubic-bezier(0.16, 1, 0.3, 1) both, floatAnimation 5.5s ease-in-out infinite;
-	animation-delay: 0.08s, 0.7s;
+	animation: phoneRise 0.9s cubic-bezier(0.25, 1, 0.5, 1) both, floatAnimation 5.5s ease-in-out infinite;
+	animation-delay: 0.08s, 0.9s;
 }
 .phone-2 {
 	right: -100px;
 	top: 140px;
 	z-index: 11;
-	animation: phoneRise 0.62s cubic-bezier(0.16, 1, 0.3, 1) both, floatAnimation 5.5s ease-in-out infinite;
-	animation-delay: 0.22s, 0.84s;
+	animation: phoneRise 0.9s cubic-bezier(0.25, 1, 0.5, 1) both, floatAnimation 5.5s ease-in-out infinite;
+	animation-delay: 0.22s, 1.04s;
 }
 .phone-3 {
 	right: -270px;
 	top: 280px;
 	z-index: 12;
-	animation: phoneRise 0.62s cubic-bezier(0.16, 1, 0.3, 1) both, floatAnimation 5.5s ease-in-out infinite;
-	animation-delay: 0.36s, 0.98s;
+	animation: phoneRise 0.9s cubic-bezier(0.25, 1, 0.5, 1) both, floatAnimation 5.5s ease-in-out infinite;
+	animation-delay: 0.36s, 1.18s;
 }
 @keyframes floatAnimation {
 	0%, 100% {
 		transform: translateY(0px) scale(1);
 	}
 	50% {
-		transform: translateY(-12px) scale(1);
+		transform: translateY(-3px) scale(1);
 	}
 }
 @keyframes floatAnimationCenter {
@@ -989,7 +993,7 @@
 		transform: translate(-50%, -50%) translateY(0px) scale(1);
 	}
 	50% {
-		transform: translate(-50%, -50%) translateY(-24px) scale(1.02);
+		transform: translate(-50%, -50%) translateY(-6px) scale(1.005);
 	}
 }
 /* 3-phone cascade: larger, slight overlap, diagonally staggered */
@@ -1012,7 +1016,7 @@
 	top: 20px;
 	transform: rotate(0deg);
 	z-index: 10;
-	animation-delay: 0.08s, 0.7s;
+	animation-delay: 0.08s, 0.9s;
 }
 /* Center phone - middle, shifted right and down with slight overlap */
 .visuals-container.triple-phones .phone-2 {
@@ -1020,7 +1024,7 @@
 	top: 140px;
 	transform: rotate(0deg);
 	z-index: 11;
-	animation-delay: 0.22s, 0.84s;
+	animation-delay: 0.22s, 1.04s;
 }
 /* Right phone - bottom right, shifted further right and down with slight overlap */
 .visuals-container.triple-phones .phone-3 {
@@ -1028,12 +1032,12 @@
 	top: 260px;
 	transform: rotate(0deg);
 	z-index: 12;
-	animation-delay: 0.36s, 0.98s;
+	animation-delay: 0.36s, 1.18s;
 }
 @keyframes phoneRise {
 	from {
 		opacity: 0;
-		transform: translateY(80px) rotate(2deg) scale(0.85);
+		transform: translateY(15px) rotate(0.3deg) scale(0.975);
 	}
 	to {
 		opacity: 1;
@@ -1043,7 +1047,7 @@
 @keyframes phoneRiseCenter {
 	from {
 		opacity: 0;
-		transform: translate(-50%, -40%) rotate(1.5deg) scale(0.88);
+		transform: translate(-50%, -48.5%) rotate(0.25deg) scale(0.975);
 	}
 	to {
 		opacity: 1;
@@ -1107,25 +1111,8 @@
 	object-fit: cover !important;
 }
 
-.phone-center {
-	width: 420px !important;
-	height: 740px !important;
-	border-radius: 40px !important;
-	border-width: 9px !important;
-	left: 32% !important;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	animation: phoneRiseCenter 0.62s cubic-bezier(0.16, 1, 0.3, 1) both, floatAnimationCenter 3.8s ease-in-out infinite 0.62s;
+.logo-glowing {
+	filter: drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff)
+	        drop-shadow(0 0 12px rgba(255, 255, 255, 0.5))
+	        drop-shadow(0 0 20px rgba(125, 211, 252, 0.25));
 }
-
-
-@keyframes phoneRiseCenter {
-	from {
-		opacity: 0;
-		transform: translate(-50%, -40%) rotate(1deg);
-	}
-	to {
-		opacity: 1;
-		transform: translate(-50%, -50%) rotate(0deg);
-	}
-}

@@ -404,7 +404,7 @@
 		@keyframes riseIn {
 			from {
 				opacity: 0;
-				transform: translateY(38px);
+				transform: translateY(19px);
 			}
 
 			to {
@@ -416,7 +416,7 @@
 		@keyframes swipeIn {
 			from {
 				opacity: 0;
-				transform: translateX(-52px);
+				transform: translateX(-26px);
 			}
 
 			to {
@@ -428,7 +428,7 @@
 		@keyframes zoomIn {
 			from {
 				opacity: 0;
-				transform: scale(0.92);
+				transform: scale(0.96);
 			}
 
 			to {
@@ -441,7 +441,7 @@
 			from {
 				opacity: 0;
 				clip-path: inset(0 100% 0 0);
-				transform: translateX(-18px);
+				transform: translateX(-9px);
 			}
 
 			to {
@@ -454,8 +454,8 @@
 		@keyframes blurIn {
 			from {
 				opacity: 0;
-				filter: blur(10px);
-				transform: translateY(18px);
+				filter: blur(5px);
+				transform: translateY(9px);
 			}
 
 			to {
@@ -467,11 +467,11 @@
 
 		.keyword.active,
 		.bullet.active {
-			transform: translateY(-8px) scale(1.04);
+			transform: translateY(-4px) scale(1.02);
 			background: rgba(251, 191, 36, 0.22);
 			box-shadow:
-				inset 0 -4px 0 #fbbf24,
-				0 0 24px rgba(251, 191, 36, 0.34);
+				inset 0 -2px 0 #fbbf24,
+				0 0 12px rgba(251, 191, 36, 0.17);
 			transition: transform 0.28s ease, background 0.28s ease, box-shadow 0.28s ease;
 		}
 
@@ -592,7 +592,11 @@
 			gap: 12px;
 			justify-content: flex-end;
 		}
-
+		.logo-glowing {
+			filter: drop-shadow(2px 0 0 #ffffff) drop-shadow(-2px 0 0 #ffffff) drop-shadow(0 2px 0 #ffffff) drop-shadow(0 -2px 0 #ffffff)
+			        drop-shadow(0 0 12px rgba(255, 255, 255, 0.5))
+			        drop-shadow(0 0 20px rgba(125, 211, 252, 0.25));
+		}
 	</style>
 </head>
 
@@ -632,13 +636,13 @@
 		<div style="display: flex; align-items: center; width: 100%; gap: 12px; flex-wrap: wrap;">
 			<button class="btn" id="play-pause-btn">Play</button>
 			<button class="btn btn-secondary" id="prev-btn">Prev</button>
-			<input type="range" class="timeline-slider" id="timeline" min="0" max="3991" value="0">
+			<input type="range" class="timeline-slider" id="timeline" min="0" max="4141" value="0">
 			<button class="btn btn-secondary" id="next-btn">Next</button>
 			<button class="btn btn-download" id="download-btn">
 				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
 				Download MP4
 			</button>
-			<div style="font-family: monospace; min-width: 100px; text-align: right;" id="time-display">0.0s / 133.0s</div>
+			<div style="font-family: monospace; min-width: 100px; text-align: right;" id="time-display">0.0s / 138.0s</div>
 		</div>
 	</div>
 
@@ -985,11 +989,22 @@
 				caption: "",
 				variant: "enter-rise",
 			},
+			{
+				start: 133.03,
+				end: 138.03,
+				kicker: "",
+				title: "",
+				keywords: [],
+				bullets: [],
+				caption: "",
+				variant: "enter-zoom",
+				isOutro: true,
+			},
 		];
 
 		const fps = 30;
-		const totalFrames = 3991;
-		const beatFrames = 3 * fps;
+		const totalFrames = 4141;
+		const beatFrames = 8 * fps;
 		let currentFrame = 0;
 		let isPlaying = false;
 		let playInterval = null;
@@ -998,10 +1013,15 @@
 
 		const audio = new Audio();
 		const bgm = new Audio('https://raw.githubusercontent.com/sebtcheng/insighted-remotion/main/public/audio_tracks/InsightED_Video_BGM.mp3');
-		bgm.volume = 0.3;
+		bgm.volume = 0.2;
 		bgm.loop = true;
 
 		function syncAudio(sceneIndex, localFrame) {
+			if (sceneIndex < 0 || sceneIndex >= scenes.length - 1) {
+				audio.pause();
+				audio.src = "";
+				return;
+			}
 			const src = `https://raw.githubusercontent.com/sebtcheng/insighted-remotion/main/public/audio_tracks/InsightED_PrimerVid_SL${sceneIndex + 1}.mp3`;
 			if (audio.src !== src) {
 				audio.src = src;
@@ -1057,7 +1077,7 @@
 			scenes.forEach((scene, index) => {
 				const tab = document.createElement("button");
 				tab.className = "scene-tab";
-				tab.innerText = `Scene ${index + 1}: ${scene.title}`;
+				tab.innerText = scene.isOutro ? "Outro: Logo" : `Scene ${index + 1}: ${scene.title}`;
 				tab.onclick = () => jumpToFrame(scene.start * fps);
 				sceneSelector.appendChild(tab);
 			});
@@ -1076,6 +1096,41 @@
 
 			sceneBody.className = `sceneBody ${scene.variant}`;
 			void sceneBody.offsetWidth;
+
+			// Logo height & positioning
+			const logoEl = document.querySelector(".brandLine img");
+			const brandLineEl = document.querySelector(".brandLine");
+			if (scene.isOutro) {
+				if (logoEl) {
+					logoEl.style.height = "700px";
+					logoEl.classList.add("logo-glowing");
+				}
+				if (brandLineEl) {
+					brandLineEl.style.position = "absolute";
+					brandLineEl.style.left = "50%";
+					brandLineEl.style.top = "50%";
+					brandLineEl.style.transform = "translate(-50%, -50%)";
+					brandLineEl.style.justifyContent = "center";
+					brandLineEl.style.width = "auto";
+					brandLineEl.style.margin = "0";
+				}
+				sceneBody.style.display = "none";
+			} else {
+				if (logoEl) {
+					logoEl.style.height = (sceneIndex === 0) ? "220px" : "130px";
+					logoEl.classList.remove("logo-glowing");
+				}
+				if (brandLineEl) {
+					brandLineEl.style.position = "";
+					brandLineEl.style.left = "";
+					brandLineEl.style.top = "";
+					brandLineEl.style.transform = "";
+					brandLineEl.style.justifyContent = "";
+					brandLineEl.style.width = "";
+					brandLineEl.style.margin = "";
+				}
+				sceneBody.style.display = "";
+			}
 
 			kickerEl.innerText = scene.kicker;
 			if (scene.title === "InsightED") {
@@ -1164,7 +1219,7 @@
 						</div>
 					</div>
 				`;
-			} else if (sceneIndex >= 8) {
+			} else if (sceneIndex >= 8 && !scene.isOutro) {
 				slideVisualsEl.innerHTML = `
 					<div class="visuals-container">
 						<div class="phone-mockup phone-center">
@@ -1223,7 +1278,18 @@
 					clipPath = `inset(0 ${clipPercent}% 0 0)`;
 				}
 			}
-			canvasFrame.style.opacity = opacity;
+
+			let outroFadeOpacity = 1;
+			if (scene.isOutro) {
+				const fadeStartFrame = 3.5 * fps;
+				const fadeEndFrame = 5.0 * fps;
+				if (localFrame >= fadeStartFrame) {
+					const fadeProgress = (localFrame - fadeStartFrame) / (fadeEndFrame - fadeStartFrame);
+					outroFadeOpacity = 1 - Math.min(1, Math.max(0, fadeProgress));
+				}
+			}
+
+			canvasFrame.style.opacity = opacity * outroFadeOpacity;
 			canvasFrame.style.clipPath = clipPath;
 			whiteOverlay.style.opacity = whiteOverlayOpacity;
 
